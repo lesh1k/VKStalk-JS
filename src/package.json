@@ -1,0 +1,24 @@
+{
+  "name": "vkstalk-js",
+  "version": "0.0.1",
+  "description": "Scrapes VK user page for important info and interesting updates",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lesh1k/VKStalk-JS.git"
+  },
+  "keywords": [
+    "scrape",
+    "vk",
+    "data"
+  ],
+  "author": "Alexei Dvorac",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lesh1k/VKStalk-JS/issues"
+  },
+  "homepage": "https://github.com/lesh1k/VKStalk-JS#readme"
+}
