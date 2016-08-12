@@ -22,7 +22,7 @@ function* blockResourceLoading(page) {
     });
 }
 
-function* fetchPageContent(url, instance) {
+function* fetchPageContent(url, instance, block_assets=true) {
     let is_local_instance = false;
     if (!instance) {
         instance = yield * initPhantomInstance();
@@ -30,7 +30,9 @@ function* fetchPageContent(url, instance) {
     }
 
     const page = yield instance.createPage();
-    yield * blockResourceLoading(page);
+    if (block_assets) {
+        yield * blockResourceLoading(page);
+    }
 
     yield page.open(url);
     let html = yield page.property('content');
