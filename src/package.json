@@ -20,5 +20,14 @@
   "bugs": {
     "url": "https://github.com/lesh1k/VKStalk-JS/issues"
   },
-  "homepage": "https://github.com/lesh1k/VKStalk-JS#readme"
+  "homepage": "https://github.com/lesh1k/VKStalk-JS#readme",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "co": "^4.6.0",
+    "phantom": "^2.1.15"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
+  }
 }
