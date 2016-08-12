@@ -22,7 +22,7 @@ function* blockResourceLoading(page) {
     });
 }
 
-function* fetchPage(url, instance) {
+function* fetchPageContent(url, instance) {
     let is_local_instance = false;
     if (!instance) {
         instance = yield * initPhantomInstance();
@@ -48,6 +48,6 @@ function* initPhantomInstance() {
 
 module.exports = {
     blockResourceLoading: blockResourceLoading,
-    fetchPage: fetchPage,
+    fetchPageContent: fetchPageContent,
     initPhantomInstance: initPhantomInstance
 };
