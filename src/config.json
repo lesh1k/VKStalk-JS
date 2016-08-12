@@ -1,4 +1,31 @@
 {
     "url": "https://vk.com/",
-    "user_id": "id83029348"
+    "user_id": "id83029348",
+    "parse_map": [
+        {
+            "name": "Name",
+            "type": "text",
+            "selector": "#page_info_wrap .page_name"
+        },
+        {
+            "name": "Current status",
+            "type": "text",
+            "selector": "#page_current_info"
+        },
+        {
+            "name": "isOnline",
+            "type": "boolean",
+            "selector": ".profile_online > div:last-child:not(#profile_time_lv)"
+        },
+        {
+            "name": "Online",
+            "type": "text",
+            "selector": ".profile_online > div:last-child"
+        },
+        {
+            "name": "From Mobile",
+            "type": "boolean",
+            "selector": ".profile_online > div:last-child .mob_onl:not(.unshown)"
+        }
+    ]
 }
