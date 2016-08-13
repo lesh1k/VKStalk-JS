@@ -13,6 +13,11 @@
             "selector": "#page_current_info .current_text, #page_current_info .current_audio"
         },
         {
+            "name": "isListeningToMusic",
+            "type": "boolean",
+            "selector": "#page_current_info .current_audio"
+        },
+        {
             "name": "isOnline",
             "type": "boolean",
             "selector": ".profile_online > div:last-child:not(#profile_time_lv)"
