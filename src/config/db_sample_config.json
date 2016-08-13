@@ -1,0 +1,8 @@
+{
+    "driver": "mongodb",
+    "url": "localhost",
+    "port": 27017,
+    "user": "USER_NAME",
+    "password": "PASSWORD",
+    "db_name": "DB_NAME"
+}
