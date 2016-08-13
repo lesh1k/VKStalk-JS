@@ -9,7 +9,12 @@ const CONFIG = require('./config/config.json');
 const ph = require('./phantom_helpers.js');
 const db = require('./db.js');
 const collection = db.get('data');
+const USER_ID = process.argv[2];
 let instance;
+
+if (!USER_ID) {
+    throw Error('No user ID supplied.');
+}
 
 scrape();
 setInterval(scrape, CONFIG.interval * 1000);
@@ -21,11 +26,11 @@ function scrape() {
         }
         console.log('Fetching data...');
         const timestamp = new Date();
-        const url = CONFIG.url + CONFIG.user_id;
+        const url = CONFIG.url + USER_ID;
         const html = yield * ph.fetchPageContent(url, instance, false);
         const $ = cheerio.load(html);
         const data = {
-            user_id: CONFIG.user_id,
+            user_id: USER_ID,
             timestamp: timestamp
         };
         CONFIG.parse_map.forEach(item => {
@@ -36,7 +41,7 @@ function scrape() {
         const counters = parseCounters($);
         Object.assign(data, detailed_info, counters);
 
-        fs.writeFileSync(`../logs/${CONFIG.user_id}.json`, JSON.stringify(data));
+        fs.writeFileSync(`../logs/${USER_ID}.json`, JSON.stringify(data));
         collection.insert(data);
 
         clearConsole();

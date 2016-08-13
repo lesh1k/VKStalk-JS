@@ -1,6 +1,5 @@
 {
     "url": "https://vk.com/",
-    "user_id": "alexei.dvorac",
     "interval": 15,
     "parse_map": [
         {
