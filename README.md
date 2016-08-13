@@ -4,7 +4,7 @@ Scrapes VK user page for important information and interesting updates
 
 ### Setup
 
-- Install NodeJS >= v6.2.2)  
+- Install NodeJS >= v6.2.2  
 - Install mongodb  
 - Install [PhantomJS](http://phantomjs.org/)  
 - Navigate to `./src` and run `npm install`  
