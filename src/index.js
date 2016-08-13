@@ -16,13 +16,14 @@ setInterval(scrape, CONFIG.interval * 1000);
 function scrape() {
     co(function*() {
         console.log('Fetching data...');
+        const timestamp = new Date();
         // const instance = yield * ph.initPhantomInstance();
         const url = CONFIG.url + CONFIG.user_id;
         const html = yield * ph.fetchPageContent(url, undefined, false);
         const $ = cheerio.load(html);
         const data = {
             user_id: CONFIG.user_id,
-            timestamp: new Date()
+            timestamp: timestamp
         };
         CONFIG.parse_map.forEach(item => {
             const parsed = parseItem($, item);
