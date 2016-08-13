@@ -24,7 +24,7 @@
   "dependencies": {
     "cheerio": "^0.20.0",
     "co": "^4.6.0",
-    "mongoose": "^4.5.8",
+    "mongodb": "^2.2.5",
     "phantom": "^2.1.15"
   },
   "devDependencies": {
