@@ -9,17 +9,20 @@ const CONFIG = require('./config/config.json');
 const ph = require('./phantom_helpers.js');
 const db = require('./db.js');
 const collection = db.get('data');
+let instance;
 
 scrape();
 setInterval(scrape, CONFIG.interval * 1000);
 
 function scrape() {
     co(function*() {
+        if (!instance) {
+            instance = yield * ph.initPhantomInstance();
+        }
         console.log('Fetching data...');
         const timestamp = new Date();
-        // const instance = yield * ph.initPhantomInstance();
         const url = CONFIG.url + CONFIG.user_id;
-        const html = yield * ph.fetchPageContent(url, undefined, false);
+        const html = yield * ph.fetchPageContent(url, instance, false);
         const $ = cheerio.load(html);
         const data = {
             user_id: CONFIG.user_id,
