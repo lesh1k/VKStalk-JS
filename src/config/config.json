@@ -1,6 +1,7 @@
 {
     "url": "https://vk.com/",
-    "user_id": "id83029348",
+    "user_id": "alexei.dvorac",
+    "interval": 15,
     "parse_map": [
         {
             "name": "Name",
@@ -10,7 +11,7 @@
         {
             "name": "Current status",
             "type": "text",
-            "selector": "#page_current_info"
+            "selector": "#page_current_info .current_text, #page_current_info .current_audio"
         },
         {
             "name": "isOnline",
@@ -18,12 +19,12 @@
             "selector": ".profile_online > div:last-child:not(#profile_time_lv)"
         },
         {
-            "name": "Online",
+            "name": "Last seen",
             "type": "text",
             "selector": ".profile_online > div:last-child"
         },
         {
-            "name": "From Mobile",
+            "name": "isFromMobile",
             "type": "boolean",
             "selector": ".profile_online > div:last-child .mob_onl:not(.unshown)"
         }

@@ -4,45 +4,54 @@ const co = require('co');
 const fs = require('fs');
 const cheerio = require('cheerio');
 
+const LAUNCH_DATE = new Date();
 const CONFIG = require('./config/config.json');
 const ph = require('./phantom_helpers.js');
 const db = require('./db.js');
 const collection = db.get('data');
 
+scrape();
+setInterval(scrape, CONFIG.interval * 1000);
 
-co(function*() {
-    // const instance = yield * ph.initPhantomInstance();
-    const url = CONFIG.url + CONFIG.user_id;
-    const html = yield * ph.fetchPageContent(url, undefined, false);
-    const $ = cheerio.load(html);
-    const data = {
-        user_id: CONFIG.user_id
-    };
-    CONFIG.parse_map.forEach(item => {
-        const parsed = parseItem($, item);
-        data[parsed.key] = parsed.value;
+function scrape() {
+    co(function*() {
+        console.log('Fetching data...');
+        // const instance = yield * ph.initPhantomInstance();
+        const url = CONFIG.url + CONFIG.user_id;
+        const html = yield * ph.fetchPageContent(url, undefined, false);
+        const $ = cheerio.load(html);
+        const data = {
+            user_id: CONFIG.user_id,
+            timestamp: new Date()
+        };
+        CONFIG.parse_map.forEach(item => {
+            const parsed = parseItem($, item);
+            data[parsed.key] = parsed.value;
+        });
+        const detailed_info = parseDetailedProfileInformation($);
+        const counters = parseCounters($);
+        Object.assign(data, detailed_info, counters);
+
+        fs.writeFileSync(`../logs/${CONFIG.user_id}.json`, JSON.stringify(data));
+        collection.insert(data);
+
+        clearConsole();
+        const formatted_data = format(data, 'console');
+        console.log(formatted_data);
     });
-    const detailed_info = parseDetailedProfileInformation($);
-    const counters = parseCounters($);
-    console.log('Data parsed');
-    Object.assign(data, detailed_info, counters);
-
-    fs.writeFileSync(`../logs/${CONFIG.user_id}.json`, JSON.stringify(data));
-    collection.insert(data).then(() => db.close());
-
-});
+}
 
 function parseItem($, item) {
     let result = {};
     switch (item.type) {
-    case 'text':
-        result = parseTextItem($, item);
-        break;
-    case 'boolean':
-        result = parseBooleanItem($, item);
-        break;
-    default:
-        console.error('No parser for type', item.type);
+        case 'text':
+            result = parseTextItem($, item);
+            break;
+        case 'boolean':
+            result = parseBooleanItem($, item);
+            break;
+        default:
+            console.error('No parser for type', item.type);
 
     }
 
@@ -50,7 +59,7 @@ function parseItem($, item) {
 }
 
 function parseTextItem($, item) {
-    const text = $(item.selector).text();
+    const text = $(item.selector).text().trim();
     return {
         key: item.name,
         value: text
@@ -94,4 +103,38 @@ function parseCounters($) {
     });
 
     return data;
+}
+
+function clearConsole() {
+    // console.log('\x1Bc');
+    process.stdout.write('\x1Bc');
+}
+
+function format(data, purpose) {
+    let result = '';
+    switch (purpose) {
+    case 'console':
+        result = formatForConsole(data);
+        break;
+    default:
+        console.error('No parser for type', item.type);
+        break;
+    }
+
+    return result;
+}
+
+function formatForConsole(data) {
+    let result = `App launched on ${LAUNCH_DATE}\n`;
+    result += `User name: ${data.Name}\n`;
+    result += `User ID: ${data.user_id}\n\n`;
+    result += `>>> Checked on ${data.timestamp} <<<\n\n`;
+    result += `${data.Name} -- ${data['Last seen']}`;
+    if (data.isFromMobile) {
+        result += ' [Mobile]';
+    }
+    result += '\n';
+    result += `Current status: ${data['Current status']}\n`;
+
+    return result;
 }
