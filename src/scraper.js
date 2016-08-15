@@ -79,7 +79,8 @@ function collectUserData($) {
 
     const detailed_info = parse('detailedProfileInformation', $);
     const counters = parse('counters', $);
-    Object.assign(data, detailed_info, counters);
+    const content_counters = parse('contentCounters', $);
+    Object.assign(data, detailed_info, counters, content_counters);
 
     return data;
 }

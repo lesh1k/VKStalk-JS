@@ -7,6 +7,7 @@ const PARSERS = {
     'attribute': parseAttributeItem,
     'detailedProfileInformation': parseDetailedProfileInformation,
     'counters': parseCounters,
+    'contentCounters': parseContentCounters
 };
 
 function parse(type) {
@@ -65,6 +66,20 @@ function parseCounters($) {
     $('.counts_module .page_counter').each((i, el) => {
         let title = $(el).find('.label').text();
         let content = $(el).find('.count').text();
+        if (data[title]) {
+            console.error(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`);
+        }
+        data[title] = content;
+    });
+
+    return data;
+}
+
+function parseContentCounters($) {
+    let data = {};
+    $('.header_top').each((i, el) => {
+        let title = $(el).find('.header_label').text().trim();
+        let content = $(el).find('.header_count').text().trim();
         if (data[title]) {
             console.error(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`);
         }
