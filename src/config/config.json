@@ -32,5 +32,7 @@
             "type": "boolean",
             "selector": ".profile_online > div:last-child .mob_onl:not(.unshown)"
         }
-    ]
+    ],
+    "keys_to_hide_from_updates": ["Current status"],
+    "keys_to_exclude_when_looking_for_updates": ["Last seen"]
 }
