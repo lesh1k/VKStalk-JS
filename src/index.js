@@ -8,11 +8,13 @@ const ph = require('./helpers/phantom.js');
 const db = require('./db.js');
 const parse = require('./parser.js');
 const format = require('./format.js');
+const helpers = require('./helpers/helpers.js');
 
 const CONFIG = require('./config/config.json');
 const collection = db.get('data');
 const USER_ID = process.argv[2];
 let instance;
+
 
 if (!USER_ID) {
     throw Error('No user ID supplied.');
@@ -51,7 +53,7 @@ function scrape() {
                 yield collection.insert(data);
             }
 
-            // clearConsole();
+            // helpers.clearConsole();
             let formatted_data = format('dataForConsole', data, LAUNCH_DATE);
             if (updates && updates !== data) {
                 formatted_data += format('updatesForConsole', updates);
@@ -62,15 +64,6 @@ function scrape() {
         }
     });
 }
-
-
-
-function clearConsole() {
-    // console.log('\x1Bc');
-    process.stdout.write('\x1Bc');
-}
-
-
 
 function* getDiff(data) {
     let updates = null;
