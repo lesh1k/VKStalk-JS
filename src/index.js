@@ -51,6 +51,7 @@ function scrape() {
             if (updates) {
                 console.log('THERE ARE UPDATES!');
                 yield collection.insert(data);
+                console.log('UPDATES were inserted in DB!');
             }
 
             // helpers.clearConsole();
