@@ -54,8 +54,8 @@ function scrape() {
                 console.log('UPDATES were inserted in DB!');
             }
 
-            // helpers.clearConsole();
-            let formatted_data = format('dataForConsole', data, LAUNCH_DATE);
+            helpers.clearConsole();
+            let formatted_data = format('dataForConsole', data);
             if (updates && updates !== data) {
                 formatted_data += format('updatesForConsole', updates);
             }

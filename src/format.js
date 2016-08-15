@@ -1,5 +1,7 @@
 'use strict';
 
+const helpers = require('./helpers/helpers.js');
+
 
 const FORMATTERS = {
     'dataForConsole': formatForConsole,
@@ -16,7 +18,8 @@ function format(purpose, data) {
     console.error('No formatter for type', item.type);
 }
 
-function formatForConsole(data, launch_date) {
+function formatForConsole(data) {
+    let launch_date = helpers.getProcessLaunchDate();
     let name = data.Name.split(' ').map(s => s.trim()).join(' ');
     let result = `App launched on ${launch_date}\n`;
     result += `User name: ${name}\n`;
