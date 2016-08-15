@@ -13,6 +13,12 @@
             "selector": "#page_current_info .current_text, #page_current_info .current_audio"
         },
         {
+            "name": "Profile photo",
+            "type": "attribute",
+            "attribute": "src",
+            "selector": "#profile_photo_link img"
+        },
+        {
             "name": "isListeningToMusic",
             "type": "boolean",
             "selector": "#page_current_info .current_audio"

@@ -4,11 +4,12 @@
 const PARSERS = {
     'text': parseTextItem,
     'boolean': parseBooleanItem,
+    'attribute': parseAttributeItem,
     'detailedProfileInformation': parseDetailedProfileInformation,
     'counters': parseCounters,
 };
 
-function parse(type, $, item) {
+function parse(type) {
     const parser = PARSERS[type];
     if (typeof parser === 'function') {
         let args = [].slice.call(arguments, 1);
@@ -31,6 +32,14 @@ function parseBooleanItem($, item) {
     return {
         key: item.name,
         value: text
+    };
+}
+
+function parseAttributeItem($, item) {
+    const value = $(item.selector).attr(item.attribute).trim();
+    return {
+        key: item.name,
+        value: value
     };
 }
 
