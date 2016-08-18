@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const program = require('commander');
+const scraper = require('./scraper.js');
+
+
+program
+    .version('1.0.0-alpha.1')
+    .usage('[command] [options]');
+
+program
+    .command('stalk [user_id]')
+    .description('Collect data and monitor updates for user with ID=user_id')
+    .action(scraper.work);
+
+program
+    .command('summary [user_id]')
+    .description('Generate a summary on data collected about the user with ID=user_id')
+    .action(user_id => {
+        console.log(`Requested summary for user with ID=${user_id}`);
+    });
+
+program
+    .command('help')
+    .description('Display information about accepted commands and options')
+    .action(() => {
+        program.help();
+        process.exit();
+    });
+
+program.parse(process.argv);
+
+if (!program.args.length) {
+    program.help();
+}

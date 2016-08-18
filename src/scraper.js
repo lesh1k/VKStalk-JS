@@ -11,17 +11,18 @@ const helpers = require('./helpers/helpers.js');
 
 const CONFIG = require('./config/config.json');
 const collection = db.get('data');
-const USER_ID = process.argv[2];
+let USER_ID = null;
 let URL;
 let instance;
 
 module.exports = exports = {};
 
-exports.work = function() {
-    if (!USER_ID) {
+exports.work = function(user_id) {
+    if (!user_id) {
         throw Error('No user ID supplied.');
     }
 
+    USER_ID = user_id;
     URL = CONFIG.url + USER_ID;
     scrape();
 };
