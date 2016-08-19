@@ -46,3 +46,8 @@ exports.convertTimeTo24hrs = function(time) {
 
     return `${hours}:${minutes}`;
 };
+
+exports.terminate = function(reason, message) {
+    console.log(`\n\nProcess exited\nReason: ${reason}\nMessage: ${message}`);
+    process.exit();
+};
