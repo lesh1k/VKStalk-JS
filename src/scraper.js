@@ -35,6 +35,9 @@ function scrape() {
         const start_time = new Date();
         const html = yield * getPageContent(URL);
         const $ = cheerio.load(html);
+        if (!isUserPageOpen($)) {
+            helpers.terminate('Cannot scrape page', 'Profile is either hidden, not existing or deleted');
+        }
         const user_data = collectUserData($);
 
         const user_updates = yield * checkUserDataForUpdates(user_data);
@@ -68,6 +71,22 @@ function* getPageContent(url) {
     const html = yield * ph.fetchPageContent(url, instance, false);
 
     return html;
+}
+
+function isUserPageOpen($) {
+    const is_hidden_or_deleted = ($ => {
+        if ($('#page_current_info').length === 0 || $('.profile_deleted_text').length > 0) {
+            return true;
+        }
+
+        return false;
+    })($);
+
+    if ($('#profile').length > 0 && !is_hidden_or_deleted) {
+        return true;
+    }
+
+    return false;
 }
 
 function collectUserData($) {
