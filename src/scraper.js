@@ -8,6 +8,7 @@ const db = require('./db.js');
 const parse = require('./parser.js');
 const format = require('./format.js');
 const helpers = require('./helpers/helpers.js');
+const db_helpers = require('./helpers/db_helpers.js');
 
 const CONFIG = require('./config/config.json');
 const collection = db.get('data');
@@ -96,25 +97,10 @@ function* checkUserDataForUpdates(data) {
         return data;
     }
 
-    const last_document = yield * getLastUserDocument();
+    const last_document = yield * db_helpers.getLastUserDocument(collection, USER_ID);
     const updates = getDiff(last_document, data);
 
     return updates;
-}
-
-function* getLastUserDocument() {
-    let cursor = yield collection.find({
-        user_id: USER_ID
-    }, {
-        rawCursor: true
-    });
-
-    let last_document = yield cursor.sort([
-        ['timestamp', -1]
-    ]).limit(1).toArray();
-    last_document = last_document[0];
-
-    return last_document;
 }
 
 function getDiff(last_document, data) {

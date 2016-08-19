@@ -7,6 +7,7 @@ const program = require('commander');
 const scraper = require('./scraper.js');
 const report = require('./report.js');
 const format = require('./format.js');
+const helpers = require('./helpers/helpers.js');
 
 
 program
@@ -25,11 +26,11 @@ program
     .option('-t, --type [type]', 'Generate a specific report. Options: general, music.')
     .action((user_id, options) => {
         const type = options.type || 'music';
-        console.log(`\nRequested ${type} report for user with ID=${user_id}`);
+        console.log(`\nRequested ${type} report for user with ID=${user_id}\n`);
         report(type, user_id)
-            .then(results => {
-                const docs = results;
-                console.log(format('reportMusic', docs));
+            .then(data => {
+                let formatter_type = `report${helpers.capitalize(type)}`;
+                console.log(format(formatter_type, data));
                 process.exit();
             });
     });

@@ -4,13 +4,16 @@ const helpers = require('./helpers/helpers.js');
 const Table = require('cli-table');
 
 
+module.exports = format;
+
 const FORMATTERS = {
     'dataForConsole': formatForConsole,
     'updatesForConsole': formatUpdates,
-    'reportMusic': formatReportMusic
+    'reportMusic': formatReportMusic,
+    'reportGeneral': formatReportGeneral
 };
 
-function format(type, data) {
+function format(type) {
     const formatter = FORMATTERS[type];
     if (typeof formatter === 'function') {
         let args = [].slice.call(arguments, 1);
@@ -62,4 +65,12 @@ function formatReportMusic(docs) {
     return table.toString();
 }
 
-module.exports = format;
+function formatReportGeneral(doc) {
+    let result = '';
+    for (let k in doc) {
+        if (k === '_id') continue;
+        result += `${k.trim().replace(':', '')}: ${doc[k]}\n`;
+    }
+
+    return result;
+}

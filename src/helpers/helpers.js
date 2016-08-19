@@ -16,3 +16,12 @@ exports.getProcessLaunchDate = function() {
     const uptime = process.uptime() * ms_in_second;
     return new Date(now - uptime);
 };
+
+exports.capitalize = function(str) {
+    if (!str.length || typeof str !== 'string') {
+        return str;
+    }
+
+    str = str[0].toUpperCase() + str.substr(1);
+    return str;
+};

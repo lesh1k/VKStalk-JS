@@ -3,6 +3,7 @@
 const co = require('co');
 const db = require('./db.js');
 const collection = db.get('data');
+const db_helpers = require('./helpers/db_helpers.js');
 
 const REPORTERS = {
     'general': reportGeneral,
@@ -20,7 +21,12 @@ module.exports = function generateReport(type, user_id) {
 };
 
 function reportGeneral(user_id) {
-    return 'report type GENERAL';
+    return co(function* () {
+        return yield * db_helpers.getLastUserDocument(collection, user_id);
+    })
+    .catch(err => {
+        throw err;
+    });
 }
 
 function reportMusic(user_id) {
