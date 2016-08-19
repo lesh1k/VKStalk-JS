@@ -17,7 +17,6 @@ program
     .description('Collect data and monitor updates for user with ID=user_id')
     .action(user_id => {
         scraper.work(user_id);
-        process.exit();
     });
 
 program
