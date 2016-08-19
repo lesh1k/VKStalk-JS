@@ -1,15 +1,17 @@
 'use strict';
 
 const helpers = require('./helpers/helpers.js');
+const Table = require('cli-table');
 
 
 const FORMATTERS = {
     'dataForConsole': formatForConsole,
-    'updatesForConsole': formatUpdates
+    'updatesForConsole': formatUpdates,
+    'reportMusic': formatReportMusic
 };
 
-function format(purpose, data) {
-    const formatter = FORMATTERS[purpose];
+function format(type, data) {
+    const formatter = FORMATTERS[type];
     if (typeof formatter === 'function') {
         let args = [].slice.call(arguments, 1);
         return formatter.apply(null, args);
@@ -42,6 +44,22 @@ function formatUpdates(updates) {
     }
 
     return result;
+}
+
+function formatReportMusic(docs) {
+    if (!docs.length) {
+        return 'No music tracks were found';
+    }
+
+    let table = new Table({
+        head: ['Track', 'Times played']
+    });
+
+    docs.forEach(doc => {
+        table.push([doc.track, doc.play_count]);
+    });
+
+    return table.toString();
 }
 
 module.exports = format;

@@ -1,25 +1,38 @@
 #!/usr/bin/env node
 
+/* eslint no-console: 0 */
 'use strict';
 
 const program = require('commander');
 const scraper = require('./scraper.js');
+const report = require('./report.js');
+const format = require('./format.js');
 
 
 program
-    .version('1.0.0-alpha.1')
-    .usage('[command] [options]');
+    .version('1.0.0-alpha.1');
 
 program
     .command('stalk [user_id]')
     .description('Collect data and monitor updates for user with ID=user_id')
-    .action(scraper.work);
+    .action(user_id => {
+        scraper.work(user_id);
+        process.exit();
+    });
 
 program
-    .command('summary [user_id]')
-    .description('Generate a summary on data collected about the user with ID=user_id')
-    .action(user_id => {
-        console.log(`Requested summary for user with ID=${user_id}`);
+    .command('report [user_id]')
+    .description('Generate a report/summary on data collected about the user with ID=user_id')
+    .option('-t, --type [type]', 'Generate a specific report. Options: general, music.')
+    .action((user_id, options) => {
+        const type = options.type || 'music';
+        console.log(`\nRequested ${type} report for user with ID=${user_id}`);
+        report(type, user_id)
+            .then(results => {
+                const docs = results;
+                console.log(format('reportMusic', docs));
+                process.exit();
+            });
     });
 
 program
@@ -32,6 +45,6 @@ program
 
 program.parse(process.argv);
 
-if (!program.args.length) {
-    program.help();
-}
+// let missing_command_text = 'Unknown command.\nUse `vkstalk help` to see the list of available commands and options';
+// process.stdout.write(missing_command_text);
+// process.exit();

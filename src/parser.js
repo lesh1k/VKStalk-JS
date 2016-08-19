@@ -1,6 +1,5 @@
 'use strict';
 
-
 const PARSERS = {
     'text': parseTextItem,
     'boolean': parseBooleanItem,
@@ -9,6 +8,7 @@ const PARSERS = {
     'counters': parseCounters,
     'contentCounters': parseContentCounters
 };
+
 
 function parse(type) {
     const parser = PARSERS[type];
