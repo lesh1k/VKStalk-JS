@@ -13,6 +13,7 @@ const db_helpers = require('./helpers/db_helpers.js');
 const CONFIG = require('./config/config.json');
 const collection = db.get('data');
 let USER_ID = null;
+let logs_written = 0;
 let URL;
 let instance;
 
@@ -39,6 +40,7 @@ function scrape() {
         const user_updates = yield * checkUserDataForUpdates(user_data);
         if (user_updates) {
             yield collection.insert(user_data);
+            logs_written++;
         }
 
         const formatted_data = prepareConsoleOutput(user_data, user_updates);
@@ -130,7 +132,7 @@ function filterUpdates(updates) {
 }
 
 function prepareConsoleOutput(data, updates) {
-    let formatted_data = format('dataForConsole', data);
+    let formatted_data = format('dataForConsole', data, logs_written);
     if (updates && updates !== data) {
         formatted_data += format('updatesForConsole', updates);
     }

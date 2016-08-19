@@ -23,12 +23,13 @@ function format(type) {
     console.error('No formatter for type', item.type);
 }
 
-function formatForConsole(data) {
+function formatForConsole(data, logs_written=0) {
     let launch_date = helpers.getProcessLaunchDate();
     let name = data.Name.split(' ').map(s => s.trim()).join(' ');
     let result = `App launched on ${launch_date}\n`;
     result += `User name: ${name}\n`;
-    result += `User ID: ${data.user_id}\n\n`;
+    result += `User ID: ${data.user_id}\n`;
+    result += `Logs written: ${logs_written}\n\n`;
     result += `>>> Checked on ${data.timestamp} <<<\n\n`;
     result += `${name} -- ${data['Last seen']}`;
     if (data.isFromMobile) {
