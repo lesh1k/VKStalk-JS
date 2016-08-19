@@ -85,6 +85,7 @@ function collectUserData($) {
     const counters = parse('counters', $);
     const content_counters = parse('contentCounters', $);
     Object.assign(data, detailed_info, counters, content_counters);
+    data['Last seen'] = format('lastSeenTime', data['Last seen']);
 
     return data;
 }

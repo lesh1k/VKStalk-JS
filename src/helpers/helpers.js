@@ -25,3 +25,24 @@ exports.capitalize = function(str) {
     str = str[0].toUpperCase() + str.substr(1);
     return str;
 };
+
+exports.convertTimeTo24hrs = function(time) {
+    let parts = time.split(' ');
+    let hours = parts[0].split(':')[0];
+    let minutes = parts[0].split(':')[1];
+    let period = parts[1];
+
+    if (period === 'am') {
+        if (hours.length === 1) {
+            hours = '0' + hours;
+        } else if (hours === '12') {
+            hours = '00';
+        }
+    } else {
+        if (hours !== '12') {
+            hours = String(parseInt(hours, 10) + 12);
+        }
+    }
+
+    return `${hours}:${minutes}`;
+};

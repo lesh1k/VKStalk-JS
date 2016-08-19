@@ -9,6 +9,7 @@ module.exports = format;
 const FORMATTERS = {
     'dataForConsole': formatForConsole,
     'updatesForConsole': formatUpdates,
+    'lastSeenTime': formatLastSeenTime,
     'reportMusic': formatReportMusic,
     'reportGeneral': formatReportGeneral
 };
@@ -74,4 +75,15 @@ function formatReportGeneral(doc) {
     }
 
     return result;
+}
+
+function formatLastSeenTime(last_seen) {
+    const regex = /\d{1,2}\:\d{2}\s{1}(am|pm){1}/i;
+    if (regex.test(last_seen)) {
+        let time = last_seen.match(regex)[0];
+        time = helpers.convertTimeTo24hrs(time);
+        last_seen = last_seen.replace(regex, time);
+    }
+
+    return last_seen;
 }
