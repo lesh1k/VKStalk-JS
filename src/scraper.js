@@ -32,7 +32,6 @@ exports.work = function(user_id) {
 
 function scrape() {
     co(function*() {
-        const start_time = new Date();
         const html = yield * getPageContent(URL);
         const $ = cheerio.load(html);
         if (!isUserPageOpen($)) {
@@ -49,13 +48,9 @@ function scrape() {
         const formatted_data = prepareConsoleOutput(user_data, user_updates);
         helpers.clearConsole();
         process.stdout.write(formatted_data);
-
-        const end_time = new Date();
-        const timeout_correction = end_time - start_time;
-        return timeout_correction;
     })
-    .then(timeout_correction => {
-        const timeout = CONFIG.interval * 1000 - timeout_correction;
+    .then(() => {
+        const timeout = CONFIG.interval * 1000;
         setTimeout(scrape, timeout);
     })
     .catch(err => {
