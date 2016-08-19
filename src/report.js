@@ -10,7 +10,7 @@ const REPORTERS = {
     'music': reportMusic
 };
 
-module.exports = function generateReport(type, user_id) {
+module.exports = function generateReport(type) {
     const reporter = REPORTERS[type];
     if (typeof reporter === 'function') {
         let args = [].slice.call(arguments, 1);

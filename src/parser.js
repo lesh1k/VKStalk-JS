@@ -1,5 +1,8 @@
 'use strict';
 
+
+module.exports = parse;
+
 const PARSERS = {
     'text': parseTextItem,
     'boolean': parseBooleanItem,
@@ -47,7 +50,6 @@ function parseAttributeItem($, item) {
 function parseDetailedProfileInformation($) {
     let data = {};
     $('.profile_info_block').each((i, el) => {
-        // text += $(el).find('profile_info_header').text() + '\n';
         $(el).find('.profile_info_row').each((i, el) => {
             let title = $(el).find('.label').text();
             let content = $(el).find('.labeled').text();
@@ -88,5 +90,3 @@ function parseContentCounters($) {
 
     return data;
 }
-
-module.exports = parse;
