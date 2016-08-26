@@ -49,11 +49,11 @@ function parseAttributeItem($, item) {
 
 function parseDetailedProfileInformation($) {
     let data = {};
-    $('.profile_info').each((i, el) => {
+    $('.profile_info_short, .profile_info_full .profile_info_block').each((i, el) => {
         $(el).find('.profile_info_row').each((i, el) => {
             let title = $(el).find('.label').text();
             let content = $(el).find('.labeled').text();
-            if (data[title]) {
+            if (data[title] && data[title] !== content) {
                 console.error(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`);
             }
             data[title] = content;
@@ -68,7 +68,7 @@ function parseCounters($) {
     $('.counts_module .page_counter').each((i, el) => {
         let title = $(el).find('.label').text();
         let content = $(el).find('.count').text();
-        if (data[title]) {
+        if (data[title] && data[title] !== content) {
             console.error(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`);
         }
         data[title] = content;
