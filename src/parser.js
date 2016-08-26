@@ -49,7 +49,7 @@ function parseAttributeItem($, item) {
 
 function parseDetailedProfileInformation($) {
     let data = {};
-    $('.profile_info_block').each((i, el) => {
+    $('.profile_info').each((i, el) => {
         $(el).find('.profile_info_row').each((i, el) => {
             let title = $(el).find('.label').text();
             let content = $(el).find('.labeled').text();
