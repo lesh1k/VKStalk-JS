@@ -26,7 +26,7 @@ function format(type) {
 
 function formatForConsole(data, logs_written=0) {
     let launch_date = helpers.getProcessLaunchDate();
-    let name = data.Name.split(' ').map(s => s.trim()).join(' ');
+    let name = data.Name.replace('  ', ' ');
     let result = `App launched on ${launch_date}\n`;
     result += `User name: ${name}\n`;
     result += `User ID: ${data.user_id}\n`;
