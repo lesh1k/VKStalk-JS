@@ -5,11 +5,13 @@ const logger = require('../logger.js');
 module.exports = exports = {};
 
 exports.clearConsole = function() {
+    logger.debug('Function call. clearConsole()', {args: [].slice.call(arguments)});
     // console.log('\x1Bc');
     process.stdout.write('\x1Bc');
 };
 
 exports.getProcessLaunchDate = function() {
+    logger.debug('Function call. getProcessLaunchDate()', {args: [].slice.call(arguments)});
     // The result is not absolutely precise.
     // Deviations of up to 2 seconds are to be expected
     const ms_in_second = 1000;
@@ -19,6 +21,7 @@ exports.getProcessLaunchDate = function() {
 };
 
 exports.capitalize = function(str) {
+    logger.debug('Function call. capitalize(str)', {args: [].slice.call(arguments)});
     if (!str.length || typeof str !== 'string') {
         return str;
     }
@@ -28,7 +31,7 @@ exports.capitalize = function(str) {
 };
 
 exports.convertTimeTo24hrs = function(time) {
-    logger.debug(`Called convertTimeTo24hrs(${time})`, {time: time});
+    logger.debug('Function call. convertTimeTo24hrs(time)', {args: [].slice.call(arguments)});
     let parts = time.split(' ');
     let hours = parts[0].split(':')[0];
     let minutes = parts[0].split(':')[1];
@@ -50,6 +53,7 @@ exports.convertTimeTo24hrs = function(time) {
 };
 
 exports.terminate = function(reason, message) {
+    logger.debug('Function call. terminate(reason, message)', {args: [].slice.call(arguments)});
     logger.error('Manual call of process.exit()', {reason: reason, message: message});
     console.log(`\n\nProcess exited\nReason: ${reason}\nMessage: ${message}`);
     process.exit();
