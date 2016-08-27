@@ -1,5 +1,6 @@
 'use strict';
 
+const logger = require('../logger.js');
 
 module.exports = exports = {};
 
@@ -27,6 +28,7 @@ exports.capitalize = function(str) {
 };
 
 exports.convertTimeTo24hrs = function(time) {
+    logger.debug(`Called convertTimeTo24hrs(${time})`, {time: time});
     let parts = time.split(' ');
     let hours = parts[0].split(':')[0];
     let minutes = parts[0].split(':')[1];
@@ -48,6 +50,7 @@ exports.convertTimeTo24hrs = function(time) {
 };
 
 exports.terminate = function(reason, message) {
+    logger.error('Manual call of process.exit()', {reason: reason, message: message});
     console.log(`\n\nProcess exited\nReason: ${reason}\nMessage: ${message}`);
     process.exit();
 };
