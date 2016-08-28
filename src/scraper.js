@@ -2,6 +2,7 @@
 
 const co = require('co');
 const cheerio = require('cheerio');
+const path = require('path');
 
 const ph = require('./helpers/phantom.js');
 const db = require('./db.js');
@@ -43,14 +44,7 @@ function scrape() {
             logger.error('Cannot scrape page. !isUserPageOpen($) == true', {user_id: USER_ID, url: URL});
             logger.info('Scrape round skipped. Retry after timeout', {user_id: USER_ID});
             helpers.clearConsole();
-
-            let message = '';
-            message += `Attempt #${++retry_count}\n`;
-            message += 'Cannot scrape page.';
-            message += 'Profile is either hidden, not existing or deleted\n';
-            message += `Please check that USER_ID=${USER_ID} and URL=${URL} are correct.\n`;
-            message += 'Retry after timeout.';
-
+            const message = format('retryConnectionMessage', ++retry_count, USER_ID, URL);
             console.log(message);
             return;
             // helpers.terminate('Cannot scrape page', 'Profile is either hidden, not existing or deleted');
@@ -83,8 +77,12 @@ function scrape() {
         setTimeout(scrape, timeout);
     })
     .catch(err => {
-        logger.error('Caught exception in scrape()', {user_id: USER_ID, exception: err});
-        console.log(err);
+        logger.error('[CRITICAL] Caught exception in scrape()', err, {user_id: USER_ID, critical: true});
+        setTimeout(() => {
+            console.log('[CRITICAL ERROR] The process will terminate now.');
+            console.log(`For more info see the logs in ${path.resolve(CONFIG.log_directory)}`);
+            process.exit(1);
+        }, 2000);
     });
 }
 

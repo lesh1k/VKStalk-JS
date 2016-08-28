@@ -11,7 +11,8 @@ const FORMATTERS = {
     'updatesForConsole': formatUpdates,
     'lastSeenTime': formatLastSeenTime,
     'reportMusic': formatReportMusic,
-    'reportGeneral': formatReportGeneral
+    'reportGeneral': formatReportGeneral,
+    'retryConnectionMessage': formatRetryConnectionMessage
 };
 
 function format(type) {
@@ -86,4 +87,15 @@ function formatLastSeenTime(last_seen) {
     }
 
     return last_seen;
+}
+
+function formatRetryConnectionMessage(retry_count, user_id, url) {
+    let message = '';
+    message += `Attempt #${retry_count}\n`;
+    message += 'Cannot scrape page.';
+    message += 'Profile is either hidden, not existing or deleted\n';
+    message += `Please check that USER_ID=${user_id} and URL=${url} are correct.\n`;
+    message += 'Retry after timeout.';
+
+    return message;
 }
