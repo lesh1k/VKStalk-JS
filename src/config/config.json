@@ -40,6 +40,18 @@
             "name": "isFromMobile",
             "type": "boolean",
             "selector": ".profile_online > div:last-child .mob_onl:not(.unshown)"
+        },
+        {
+            "name": "Wallposts count (all)",
+            "type": "attribute",
+            "attribute": "value",
+            "selector": "#page_wall_posts #page_wall_count_all"
+        },
+        {
+            "name": "Wallposts count (own)",
+            "type": "attribute",
+            "attribute": "value",
+            "selector": "#page_wall_posts #page_wall_count_own"
         }
     ],
     "keys_to_hide_from_updates": ["Current status"],
