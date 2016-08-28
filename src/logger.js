@@ -8,6 +8,7 @@ const logger = new winston.Logger({
     transports: [
         new (dailyRotateFile)({
             name: 'exception-file-daily',
+            level: 'error',
             handleExceptions: true,
             humanReadableUnhandledException: true,
             filename: '../logs/exception.log',
