@@ -1,5 +1,7 @@
 'use strict';
 
+const logger = require('./logger.js');
+
 
 module.exports = parse;
 
@@ -20,7 +22,7 @@ function parse(type) {
         return parser.apply(null, args);
     }
 
-    console.error('No parser for type', type);
+    logger.error('No parser for type', type);
 }
 
 function parseTextItem($, item) {
@@ -54,7 +56,7 @@ function parseDetailedProfileInformation($) {
             let title = $(el).find('.label').text();
             let content = $(el).find('.labeled').text();
             if (data[title] && data[title] !== content) {
-                console.error(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`);
+                logger.warn(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`, {user_id: data.user_id});
             }
             data[title] = content;
         });
@@ -69,7 +71,7 @@ function parseCounters($) {
         let title = $(el).find('.label').text();
         let content = $(el).find('.count').text();
         if (data[title] && data[title] !== content) {
-            console.error(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`);
+            logger.warn(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`, {user_id: data.user_id});
         }
         data[title] = content;
     });
@@ -83,7 +85,7 @@ function parseContentCounters($) {
         let title = $(el).find('.header_label').text().trim();
         let content = $(el).find('.header_count').text().trim();
         if (data[title]) {
-            console.error(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`);
+            logger.warn(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`, {user_id: data.user_id});
         }
         data[title] = content;
     });
