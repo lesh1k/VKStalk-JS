@@ -22,7 +22,7 @@ function parse(type) {
         return parser.apply(null, args);
     }
 
-    logger.error('No parser for type', type);
+    logger.error(`Bad config.json. No parser for type=${type}`, {type: type});
 }
 
 function parseTextItem($, item) {
