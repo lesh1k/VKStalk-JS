@@ -92,6 +92,7 @@ function scrape() {
 
 function* getPageContent(url) {
     if (!instance) {
+        logger.debug('Yield new phantom instance', {user_id: USER_ID});
         instance = yield * ph.initPhantomInstance();
     }
     console.log('\nFetching data...');
