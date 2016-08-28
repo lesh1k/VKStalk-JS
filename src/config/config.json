@@ -1,6 +1,8 @@
 {
     "url": "https://vk.com/",
     "interval": 15,
+    "log_level": "debug",
+    "log_directory": "../logs",
     "parse_map": [
         {
             "name": "Name",
