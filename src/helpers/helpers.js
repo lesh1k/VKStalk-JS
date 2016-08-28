@@ -1,6 +1,7 @@
 'use strict';
 
 const logger = require('../logger.js');
+const memwatch = require('memwatch-next');
 
 module.exports = exports = {};
 
@@ -57,4 +58,10 @@ exports.terminate = function(reason, message) {
     logger.error('Manual call of process.exit()', {reason: reason, message: message});
     console.log(`\n\nProcess exited\nReason: ${reason}\nMessage: ${message}`);
     process.exit();
+};
+
+exports.monitorMemoryLeaks = function() {
+    memwatch.on('leak', function(info) {
+        logger.warn('Possible MEMORY LEAK detected', info);
+    });
 };
