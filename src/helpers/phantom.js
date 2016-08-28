@@ -9,8 +9,7 @@ function* blockResourceLoading(page) {
         var BLOCKED_RESOURCES = [
             /\.gif/gi,
             /\.png/gi,
-            /\.css/gi,
-            /^((?!(feuseradmin\.js|tinymce|jquery-)).)*\.js.*/gi
+            /\.css/gi
         ];
         var is_blacklisted_resource = BLOCKED_RESOURCES.some(function(r) {
             return r.test(requestData['url']);
