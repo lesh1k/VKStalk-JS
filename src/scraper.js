@@ -32,6 +32,8 @@ exports.work = function(user_id) {
     scrape();
 };
 
+helpers.monitorMemoryLeaks();
+
 
 function scrape() {
     logger.debug('Function call. scrape()', {args: [].slice.call(arguments)});
