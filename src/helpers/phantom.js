@@ -58,10 +58,10 @@ function setupPhantomCleanupOnNodeProcessTermination(instance) {
     process.on('exit', phantomInstanceKill);
 
     // Catch CTRL+C
-    process.on('SIGINT', phantomInstanceKill);
+    process.on('SIGINT', process.exit);
 
-    process.on('SIGTERM', phantomInstanceKill);
-    process.on('SIGHUP', phantomInstanceKill);
+    process.on('SIGTERM', process.exit);
+    process.on('SIGHUP', process.exit);
 
     // On uncaught exceptions
     process.on('uncaughtException', phantomInstanceKill);
