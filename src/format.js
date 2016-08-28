@@ -89,9 +89,9 @@ function formatLastSeenTime(last_seen) {
     return last_seen;
 }
 
-function formatRetryConnectionMessage(retry_count, user_id, url) {
+function formatRetryConnectionMessage(retry_count, max_retry_attempts, user_id, url) {
     let message = '';
-    message += `Attempt #${retry_count}\n`;
+    message += `Attempt #${retry_count} (out of ${max_retry_attempts})\n`;
     message += 'Cannot scrape page.';
     message += 'Profile is either hidden, not existing or deleted\n';
     message += `Please check that USER_ID=${user_id} and URL=${url} are correct.\n`;

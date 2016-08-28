@@ -44,8 +44,12 @@ function scrape() {
             logger.error('Cannot scrape page. !isUserPageOpen($) == true', {user_id: USER_ID, url: URL});
             logger.info('Scrape round skipped. Retry after timeout', {user_id: USER_ID});
             helpers.clearConsole();
-            const message = format('retryConnectionMessage', ++retry_count, USER_ID, URL);
+            const message = format('retryConnectionMessage', ++retry_count, CONFIG.max_retry_attempts, USER_ID, URL);
             console.log(message);
+
+            if (retry_count >= CONFIG.max_retry_attempts) {
+                helpers.terminate('Max retry attempts reached.', `Failed ${retry_count} of ${CONFIG.max_retry_attempts} attempts.`);
+            }
             return;
             // helpers.terminate('Cannot scrape page', 'Profile is either hidden, not existing or deleted');
         }
