@@ -34,7 +34,8 @@ function reportMusic(user_id) {
         const docs = yield collection.aggregate([
             {$match: {user_id: user_id, isListeningToMusic: true}},
             {$group: {_id: {track: '$Current status'}, play_count: {$sum: 1}}},
-            {$project: {_id: 0, track:'$_id.track', play_count: 1}}
+            {$project: {_id: 0, track:'$_id.track', play_count: 1}},
+            {$sort: {play_count: -1}}
         ]);
 
         return docs;
