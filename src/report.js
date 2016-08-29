@@ -1,6 +1,8 @@
 'use strict';
 
 const co = require('co');
+
+const logger = require('./logger.js');
 const db = require('./db.js');
 const collection = db.get('data');
 const db_helpers = require('./helpers/db_helpers.js');
@@ -17,19 +19,26 @@ module.exports = function generateReport(type) {
         return reporter.apply(null, args);
     }
 
-    return `No summarizer for type ${type}`;
+    const message = `No summarizer for type ${type}`;
+    logger.error(message, {type: type, args: [].slice.call(arguments)})
+    return message;
 };
 
 function reportGeneral(user_id) {
+    logger.debug('Call reportGeneral()', {args: [].slice.call(arguments), user_id: user_id});
     return co(function* () {
         return yield * db_helpers.getLastUserDocument(collection, user_id);
     })
     .catch(err => {
-        throw err;
+        logger.error('Could not generate report.', err);
+        setTimeout(() => {
+            throw err;
+        }, 2000);
     });
 }
 
 function reportMusic(user_id) {
+    logger.debug('Call reportMusic()', {args: [].slice.call(arguments), user_id: user_id});
     return co(function* () {
         const docs = yield collection.aggregate([
             {$match: {user_id: user_id, isListeningToMusic: true}},
@@ -41,6 +50,9 @@ function reportMusic(user_id) {
         return docs;
     })
     .catch(err => {
-        throw err;
+        logger.error('Could not generate report.', err);
+        setTimeout(() => {
+            throw err;
+        }, 2000);
     });
 }
