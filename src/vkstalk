@@ -4,10 +4,10 @@
 'use strict';
 
 const program = require('commander');
-const scraper = require('./scraper.js');
-const report = require('./report.js');
-const format = require('./format.js');
-const helpers = require('./helpers/helpers.js');
+const scraper = require('./stalker/scraper.js');
+const report = require('./stalker/report.js');
+const format = require('./stalker/format.js');
+const helpers = require('./stalker/helpers/helpers.js');
 
 
 program

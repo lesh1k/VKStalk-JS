@@ -4,7 +4,7 @@ const winston = require('winston');
 const dailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
 
-const CONFIG = require('./config/config.json');
+const CONFIG = require('../config/config.json');
 
 
 const logger = new winston.Logger({

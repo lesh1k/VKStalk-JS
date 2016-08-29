@@ -12,7 +12,7 @@ const helpers = require('./helpers/helpers.js');
 const db_helpers = require('./helpers/db_helpers.js');
 const logger = require('./logger.js');
 
-const CONFIG = require('./config/config.json');
+const CONFIG = require('../config/config.json');
 const collection = db.get('data');
 let USER_ID = null;
 let logs_written = 0;
