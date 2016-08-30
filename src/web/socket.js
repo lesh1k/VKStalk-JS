@@ -6,6 +6,8 @@ const path = require('path');
 
 module.exports = function(server) {
     const socket_io = require('socket.io')(server);
+    const workers = {};
+
     socket_io.on('connection', (socket) => {
         socket.emit('stalk-data', 'Connecting...');
         socket.emit('connection', 'Done!');
@@ -18,10 +20,14 @@ module.exports = function(server) {
             });
 
             let worker = cluster.fork();
+            workers[user_id] = worker.id;
             worker.process.stdout.on('data', buffer => {
                 socket.emit('stalk-data', buffer.toString('utf8'));
             });
-            socket.emit('stalk-data', user_id);
+        });
+
+        socket.on('disconnect', () => {
+            Object.keys(cluster.workers).forEach(id => cluster.workers[id].kill());
         });
     });
 };
