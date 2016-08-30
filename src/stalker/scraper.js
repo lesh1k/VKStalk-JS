@@ -169,7 +169,7 @@ function getDiff(last_document, data) {
         }
     }
 
-    filterUpdates(updates);
+    // filterUpdates(updates);
     if (Object.keys(updates).length) {
         return updates;
     }
@@ -178,10 +178,17 @@ function getDiff(last_document, data) {
 }
 
 function filterUpdates(updates) {
-    CONFIG.keys_to_hide_from_updates.forEach(k => delete updates[k]);
+    if (updates && typeof updates === 'object') {
+        CONFIG.keys_to_hide_from_updates.forEach(k => delete updates[k]);
+    }
 }
 
 function prepareConsoleOutput(data, updates) {
+    filterUpdates(updates);
+    if (updates && !Object.keys(updates).length) {
+        updates = null;
+    }
+
     let formatted_data = format('dataForConsole', data, logs_written);
     if (updates && updates !== data) {
         formatted_data += format('updatesForConsole', updates);
