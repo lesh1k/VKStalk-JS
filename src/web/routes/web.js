@@ -10,7 +10,7 @@ module.exports = router;
 
 router.route('/')
     .get((req, res) => {
-        res.sendFile('index.html', {root: __dirname + '/../views'});
+        res.render('index');
     })
     .post((req, res) => {
         const action = req.body['action'];

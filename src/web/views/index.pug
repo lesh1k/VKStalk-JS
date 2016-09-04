@@ -1,0 +1,16 @@
+extends ./layout.pug
+
+block content
+    h3 Welcome to vkstalk-js
+
+    form(action='/', method='post')
+        label(for='user-id') User ID
+        input#user-id(type='text', name='user-id', value='', required='')
+        br
+        label(for='action') Action
+        input(type='radio', name='action', value='stalk', required='')
+        |  Stalk
+        input(type='radio', name='action', value='report', required='')
+        |  Report
+        br
+        button(type='submit') Stalk

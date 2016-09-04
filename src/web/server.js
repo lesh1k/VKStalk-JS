@@ -14,10 +14,16 @@ const api_routes = require('./routes/api.js');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
-app.use(express.static(path.join(__dirname, './views')));
-app.use('/assets', express.static(path.join(__dirname, '..', 'node_modules')));
 app.use(body_parser.urlencoded({extended: true}));
 app.use(body_parser.json());
+
+// Configure template engine
+app.set('view engine', 'pug');
+
+app.set('views', path.join(__dirname, 'views'));
+
+// Configure assets paths
+app.use('/assets', express.static(path.join(__dirname, '..', 'node_modules')));
 
 // Register routes
 app.use('/', web_routes);

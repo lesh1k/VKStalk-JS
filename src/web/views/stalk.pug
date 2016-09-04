@@ -1,0 +1,18 @@
+extends ./layout.pug
+
+#stalk-data
+script(src='/assets/socket.io-client/socket.io.js', charset='utf-8')
+script(type='text/javascript').
+    (function(socket_io) {
+        var socket = socket_io.connect(window.location.origin);
+        
+        socket.on('connection', (data) => {
+            var path_parts = window.location.pathname.split('/');
+            var user_id = path_parts[path_parts.length - 1];
+            socket.emit('stalk-request', user_id);
+        });
+
+        socket.on('stalk-data', function(data) {
+            document.getElementById('stalk-data').innerText = data;
+        });
+    })(io);
