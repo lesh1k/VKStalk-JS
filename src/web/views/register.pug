@@ -16,7 +16,7 @@ block content
                         label(for='password') Password
 
                     button.btn.col.s12(type='submit') Register
-        if (error)
+        if (error && error.length > 0)
             .row
                 .col.s12
                     .card.red.darken-2

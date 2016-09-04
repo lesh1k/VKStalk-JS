@@ -4,7 +4,7 @@ block content
     .row
         .col.s12
             h3 Log in
-            form(role='form', method='post', action='/login')
+            form#auth-form(role='form', method='post', action='/login')
                 .row
                     .input-field.col.s6
                         input#username(name='username', type='text')
@@ -16,3 +16,22 @@ block content
 
 
                     button.btn.col.s12(type='submit') Log in
+                    button#create-account.btn.col.s12.white.blue-text Create account
+
+    if (error && error.length > 0)
+        .row
+            .col.s12
+                .card.red.darken-2
+                    .card-content.white-text
+                        p= error
+
+    script.
+        (function() {
+            var btn = document.getElementById('create-account');
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var form = document.getElementById('auth-form');
+                form.action = '/register';
+                form.submit();
+            });
+        })();

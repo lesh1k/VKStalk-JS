@@ -10,9 +10,23 @@ const report = require('../../stalker/report.js');
 module.exports = router;
 
 
+router.all('*', requireAuthentication);
+
+function requireAuthentication(req, res, next) {
+    if (req.user || req.url === '/login' || req.url === '/register') {
+        if (req.user) {
+            res.locals.user = req.user;
+        }
+
+        return next();
+    }
+
+    res.redirect('/login');
+}
+
 router.route('/')
     .get((req, res) => {
-        res.render('index', {user: req.user});
+        res.render('index');
     })
     .post((req, res) => {
         const action = req.body['action'];
@@ -35,26 +49,28 @@ router.route('/')
     });
 
 router.route('/register')
-    .get((req, res) => {
-        res.render('register');
-    })
-    .post((req, res) => {
+    .post((req, res, next) => {
         const username = req.body.username;
         const password = req.body.password;
         User.register(new User({username: username}), password, (err, user) => {
             if (err) {
-                return res.render('register', {user: user, error: err.message});
+                return res.render('login', {error: err.message});
             }
 
             passport.authenticate('local')(req, res, () => {
-                res.redirect('/');
+                req.session.save(err => {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.redirect('/');
+                });
             });
         });
     });
 
 router.route('/login')
     .get((req, res) => {
-        res.render('login', {user: req.user});
+        res.render('login');
     })
     .post(passport.authenticate('local'), (req, res) => {
         res.redirect('/');
