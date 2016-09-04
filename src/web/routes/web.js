@@ -34,5 +34,5 @@ router.route('/')
 
 router.route('/stalk/:user_id')
     .get((req, res) => {
-        res.sendFile('stalk.html', {root: __dirname + '/../views'});
+        res.render('stalk');
     });

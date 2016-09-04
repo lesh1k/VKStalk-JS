@@ -5,10 +5,10 @@ block content
 
     form(action='/', method='post')
         label(for='user-id') User ID
-        input#user-id(type='text', name='user-id', value='', required='')
+        input#user-id(type='text', name='user-id', value='', required='', autofocus)
         br
         label(for='action') Action
-        input(type='radio', name='action', value='stalk', required='')
+        input(type='radio', name='action', value='stalk', required='', checked)
         |  Stalk
         input(type='radio', name='action', value='report', required='')
         |  Report
