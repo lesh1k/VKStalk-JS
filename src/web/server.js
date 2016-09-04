@@ -23,7 +23,8 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // Configure assets paths
-app.use('/assets', express.static(path.join(__dirname, '..', 'node_modules')));
+app.use('/node_m', express.static(path.join(__dirname, '..', 'node_modules')));
+app.use('/app', express.static(path.join(__dirname, 'app')));
 
 // Register routes
 app.use('/', web_routes);
