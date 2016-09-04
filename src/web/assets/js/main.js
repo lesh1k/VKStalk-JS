@@ -7,5 +7,9 @@
         $('.button-collapse').sideNav({
             edge: 'right'
         });
+
+        $('.dropdown-button').dropdown({
+            hover: true
+        });
     });
 })();

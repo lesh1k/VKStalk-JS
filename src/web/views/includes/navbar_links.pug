@@ -1,10 +1,17 @@
-if (user)
-    li
-        a(href='javascript:void(0)')= user.username
-    li
-        a(href='/logout') Log out
-else
-    li
-        a(href='/register') Register
-    li
-        a(href='/login') Log in
+mixin navbarLinks(suffix)
+    if (user)
+        ul.dropdown-content(id='dropdown-user' + suffix)
+            li
+                a(href='/logout') Log out
+
+        li.divider
+        li
+            a.dropdown-button(href='#!', data-activates='dropdown-user' + suffix)
+                | #{user.username}
+                i.material-icons.right arrow_drop_down
+
+    else
+        li
+            a(href='/register') Register
+        li
+            a(href='/login') Log in
