@@ -7,6 +7,7 @@ mixin navbarLinks(suffix)
         li.divider
         li
             a.dropdown-button(href='#!', data-activates='dropdown-user' + suffix)
+                i.material-icons.left person
                 | #{user.username}
                 i.material-icons.right arrow_drop_down
 
