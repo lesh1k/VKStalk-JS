@@ -34,8 +34,14 @@ module.exports = function(server) {
             });
         });
 
-        socket.on('disconnect', () => {
-            Object.keys(cluster.workers).forEach(id => cluster.workers[id].kill());
+        // socket.on('disconnect', () => {
+        //     Object.keys(cluster.workers).forEach(id => cluster.workers[id].kill());
+        // });
+
+        socket.on('stop-worker', user_id => {
+            const worker_id = workers[user_id];
+            cluster.workers[worker_id].kill();
+            socket.disconnect();
         });
     });
 };
