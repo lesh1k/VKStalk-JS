@@ -1,15 +1,24 @@
 extends ./layout.pug
 
 block content
-    div.row
-        div.col.s12
-            form(action='/', method='post')
-                label(for='user-id') User ID
-                input#user-id(type='text', name='user-id', value='', required='', autofocus)
-                p
-                    input#action-stalk(type='radio', name='action', value='stalk', required='', checked)
-                    label(for='action-stalk') Stalk
-                p
-                    input#action-report(type='radio', name='action', value='report', required='')
-                    label(for='action-report') Report
-                button.btn(type='submit') Stalk
+    if (!user)
+        h3 Please
+            a(href='/login') &nbsp;log in
+    else
+        div.row
+            div.col.s12
+                form(action='/', method='post')
+                    .row
+                        .input-field.col.s12
+                            input#user-id(type='text', name='user-id', value='', required='', autofocus)
+                            label(for='user-id') User ID
+
+                        .col.s12
+                            p
+                                input#action-stalk(type='radio', name='action', value='stalk', required='', checked)
+                                label(for='action-stalk') Stalk
+                            p
+                                input#action-report(type='radio', name='action', value='report', required='')
+                                label(for='action-report') Report
+                        .col.s12
+                            button.btn(type='submit') Stalk

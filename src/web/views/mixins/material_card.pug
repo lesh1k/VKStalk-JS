@@ -1,11 +1,11 @@
-mixin materialCard(card_color)
+mixin materialCard(card_color, content)
     .row
-    .col.s12.m6
-    .card(class=card_color)
-        .card-content.white-text
-            //- span.card-title User ID:
-                span.user-id
-            p#stalk-data
+        .col.s12.m6
+            .card(class=card_color)
+                .card-content.white-text
+                    //- span.card-title User ID:
+                        span.user-id
+                    p#stalk-data
 
-        .card-action
-            a.stop-worker(href='#') Stop
+                .card-action
+                    a.stop-worker(href='#') Stop

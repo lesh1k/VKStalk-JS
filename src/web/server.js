@@ -5,7 +5,12 @@ const app = express();
 const body_parser = require('body-parser');
 const path = require('path');
 const server = require('http').Server(app);
+const cookieParser = require('cookie-parser');
 const socket = require('./socket.js')(server);
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 const PORT = process.env.PORT || 8080;
 const web_routes = require('./routes/web.js');
@@ -16,6 +21,12 @@ const api_routes = require('./routes/api.js');
 // this will let us get the data from a POST
 app.use(body_parser.urlencoded({extended: true}));
 app.use(body_parser.json());
+app.use(cookieParser());
+app.use(require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
 
 // Configure template engine
 app.set('view engine', 'pug');
@@ -26,6 +37,19 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/node_m', express.static(path.join(__dirname, '..', 'node_modules')));
 app.use('/app', express.static(path.join(__dirname, 'app')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Configure passport
+app.use(passport.initialize());
+app.use(passport.session());
+const User = require('./models/user');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// mongoose
+const DB_CONFIG = require(path.join(__dirname, '..', 'config', 'db.json'));
+const db_url = `${DB_CONFIG.driver}://${DB_CONFIG.user}:${DB_CONFIG.password}@${DB_CONFIG.url}:${DB_CONFIG.port}/${DB_CONFIG.db_name}`;
+mongoose.connect(db_url);
 
 // Register routes
 app.use('/', web_routes);

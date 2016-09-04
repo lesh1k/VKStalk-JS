@@ -1,0 +1,24 @@
+extends ./layout.pug
+include ./mixins/material_card.pug
+
+block content
+    .row
+        .col.s12
+            h3 Register
+            form(role='form', method='post', action='/register')
+                .row
+                    .input-field.col.s6
+                        input#username(name='username', type='text')
+                        label(for='username') Username
+
+                    .input-field.col.s6
+                        input#password(name='password', type='password')
+                        label(for='password') Password
+
+                    button.btn.col.s12(type='submit') Register
+        if (error)
+            .row
+                .col.s12
+                    .card.red.darken-2
+                        .card-content.white-text
+                            p= error
