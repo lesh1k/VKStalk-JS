@@ -1,0 +1,9 @@
+nav.light-blue.darken-2
+    .nav-wrapper
+        a.brand-logo.center(href='/') vkstalk
+        a.button-collapse.right(href='#', data-activates='mobile-demo')
+            i.material-icons menu
+        ul.right.hide-on-med-and-down
+            include ./navbar_links.pug
+        ul#mobile-demo.side-nav
+            include ./navbar_links.pug

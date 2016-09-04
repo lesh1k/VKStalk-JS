@@ -15,7 +15,7 @@ module.exports = function(server) {
         socket.on('stalk-request', user_id => {
             const worker_id = workers[user_id];
             let worker = cluster.workers[worker_id];
-            if (typeof worker_id === 'undefined') {
+            if (!worker) {
                 console.log('Creating new WORKER.');
                 cluster.setupMaster({
                     exec: path.resolve(__dirname, '../vkstalk'),

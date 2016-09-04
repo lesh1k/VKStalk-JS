@@ -25,6 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Configure assets paths
 app.use('/node_m', express.static(path.join(__dirname, '..', 'node_modules')));
 app.use('/app', express.static(path.join(__dirname, 'app')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Register routes
 app.use('/', web_routes);

@@ -2,6 +2,9 @@ doctype 5
 html(ng-app='vkstalkApp')
     include ./includes/head.pug
 body
-    block content
+    include ./includes/navbar.pug
+    div#content-wrapper.content-wrapper.container
+        block content
+
     include ./includes/footer.pug
     include ./includes/scripts.pug
