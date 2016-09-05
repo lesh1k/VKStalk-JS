@@ -42,10 +42,15 @@ function parseBooleanItem($, item) {
 }
 
 function parseAttributeItem($, item) {
-    const value = $(item.selector).attr(item.attribute).trim();
+    let value = $(item.selector).attr(item.attribute);
+    if (typeof value !== 'string') {
+        logger.warn('parseAttributeItem. attr/value is not string', {item: item, value: value});
+        value = '';
+    }
+
     return {
         key: item.name,
-        value: value
+        value: value.trim()
     };
 }
 
