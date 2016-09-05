@@ -29,23 +29,27 @@ router.route('/')
         res.render('index');
     })
     .post((req, res) => {
-        const action = req.body['action'];
-        const user_id = req.body['user-id'];
+        // const action = req.body['action'];
+        const user_id = req.body['user-id'].trim();
 
-        switch (action) {
-            case 'report':
-                report('music', user_id)
-                    .then(data => {
-                        res.json(data);
-                    });
-                break;
-            case 'stalk':
-                res.redirect(`/stalk/${user_id}`);
-                break;
-            default:
-                res.send(`Requested to ${action} on ${user_id}`);
-                break;
+        if (!user_id) {
+            res.sendStatus(400);
         }
+
+        // switch (action) {
+        //     case 'report':
+        //         report('music', user_id)
+        //             .then(data => {
+        //                 res.json(data);
+        //             });
+        //         break;
+        //     case 'stalk':
+        //         res.redirect(`/stalk/${user_id}`);
+        //         break;
+        //     default:
+        //         res.send(`Requested to ${action} on ${user_id}`);
+        //         break;
+        // }
     });
 
 router.route('/register')
