@@ -86,7 +86,7 @@ function scrape() {
         logger.error('[CRITICAL] Caught exception in scrape()', err, {user_id: USER_ID, critical: true});
         setTimeout(() => {
             console.log('[CRITICAL ERROR] The process will terminate now.');
-            console.log(`For more info see the logs in ${path.resolve(CONFIG.log_directory)}`);
+            console.log(`For more info see the logs`);
             process.exit(1);
         }, 2000);
     });
@@ -105,7 +105,7 @@ function* getPageContent(url) {
 
 function isUserPageOpen($) {
     const is_hidden_or_deleted = ($ => {
-        if ($('#page_current_info').length === 0 || $('.profile_deleted_text').length > 0) {
+        if ($('#page_current_info, .profile_online').length === 0 || $('.profile_deleted_text').length > 0) {
             return true;
         }
 
