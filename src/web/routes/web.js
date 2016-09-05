@@ -33,8 +33,10 @@ router.route('/')
         const user_id = req.body['user-id'].trim();
 
         if (!user_id) {
-            res.sendStatus(400);
+            return res.sendStatus(400);
         }
+
+
 
         // switch (action) {
         //     case 'report':
