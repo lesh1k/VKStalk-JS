@@ -27,6 +27,7 @@ module.exports = function(server) {
             if (!worker) {
                 socket_io.sockets.to(room).emit('stalk-data', {stalked_id: stalked_id, message: 'Stalker offline. Click "STALK" to turn it on.'});
             } else {
+                socket_io.sockets.to(room).emit('stalk-data', {stalked_id: stalked_id, message:'Connected. Waiting for a message...'});
                 worker.process.stdout.on('data', buffer => {
                     socket_io.sockets.to(room).emit('stalk-data', {stalked_id: stalked_id, message: buffer.toString('utf8')});
                 });
