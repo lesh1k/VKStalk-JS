@@ -7,11 +7,11 @@ block content
             form#auth-form(role='form', method='post', action='/login')
                 .row
                     .input-field.col.s6
-                        input#username(name='username', type='text')
+                        input#username(name='username', type='text', autofocus, required)
                         label(for='username') Username
 
                     .input-field.col.s6
-                        input#password(name='password', type='password')
+                        input#password(name='password', type='password', required, pattern="^.{1,}$", title="Password must be at least 8 symbols long")
                         label(for='password') Password
 
 
