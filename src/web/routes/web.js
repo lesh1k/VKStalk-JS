@@ -5,7 +5,7 @@ const router = express.Router();
 const passport = require('passport');
 
 const User = require('../models/user');
-const report = require('../../stalker/report.js');
+// const report = require('../../stalker/report.js');
 
 module.exports = router;
 
