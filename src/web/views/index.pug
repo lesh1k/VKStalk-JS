@@ -5,20 +5,41 @@ block content
         h3 Please
             a(href='/login') &nbsp;log in
     else
-        div.row
-            div.col.s12
-                form(action='/', method='post')
-                    .row
-                        .input-field.col.s12
-                            input#user-id(type='text', name='user-id', value='', required='', autofocus)
-                            label(for='user-id') User ID
 
-                        .col.s12
-                            p
-                                input#action-stalk(type='radio', name='action', value='stalk', required='', checked)
-                                label(for='action-stalk') Stalk
-                            p
-                                input#action-report(type='radio', name='action', value='report', required='')
-                                label(for='action-report') Report
-                        .col.s12
-                            button.btn(type='submit') Stalk
+        section#add-user
+            .row
+                .col.s12
+                    form(action='/', method='post')
+                        .row
+                            .input-field.col.s12
+                                input#user-id(type='text', name='user-id', value='', required)
+                                label(for='user-id') User ID
+
+                            .col.s12
+                                button.btn(type='submit') Add
+
+        section#stalkers
+            .row
+                .col.s12.m6
+                    .card.blue-grey.darken-1#alexei.dvorac
+                        .card-content.white-text
+                            span.card-title User ID:
+                                span.user-id &nbsp; alexei.dvorac
+                            p.stalk-data
+
+                        .card-action
+                            a.stalk-user(href='#') Stalk
+                            a.stop-worker(href='#') Stop
+                            a.report(href='#') Reports
+
+                .col.s12.m6
+                    .card.blue-grey.darken-1#id83029348
+                        .card-content.white-text
+                            span.card-title User ID:
+                                span.user-id &nbsp; id83029348
+                            p.stalk-data
+
+                        .card-action
+                            a.stalk-user(href='#') Stalk
+                            a.stop-worker(href='#') Stop
+                            a.report(href='#') Reports
