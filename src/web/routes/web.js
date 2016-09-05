@@ -26,6 +26,7 @@ function requireAuthentication(req, res, next) {
 
 router.route('/')
     .get((req, res) => {
+        console.log(req.user);
         res.render('index');
     })
     .post((req, res) => {
@@ -35,6 +36,16 @@ router.route('/')
         if (!user_id) {
             return res.sendStatus(400);
         }
+
+        if (req.user.stalked_ids.indexOf(user_id) === -1) {
+            req.user.stalked_ids.push(user_id);
+            User.update({_id: req.user._id}, {$set: {stalked_ids: req.user.stalked_ids}}, () => {
+                res.render('index');
+            });
+        } else {
+            res.send('This user ID is already in your list.');
+        }
+
 
 
 
