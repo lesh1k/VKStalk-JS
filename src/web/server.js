@@ -15,7 +15,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const SECRETS = require('../config/secrets.json');
 const PORT = process.env.PORT || 8080;
 const web_routes = require('./routes/web.js');
-const api_routes = require('./routes/api.js');
+// const api_routes = require('./routes/api.js');
 const session_opts = {
     saveUninitialized: true, // saved new sessions
     resave: false, // do not automatically write to the session store
@@ -61,7 +61,7 @@ mongoose.connect(db_url);
 
 // Register routes
 app.use('/', web_routes);
-app.use('/api', api_routes);
+// app.use('/api', api_routes);
 
 // Start the server
 // app.listen(PORT);
