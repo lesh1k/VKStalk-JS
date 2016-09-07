@@ -6,7 +6,8 @@ const body_parser = require('body-parser');
 const path = require('path');
 const server = require('http').Server(app);
 const cookieParser = require('cookie-parser');
-const socket = require('./socket.js')(server);
+const passportSocketIo = require('passport.socketio');
+const io = require('./socket.js')(server);
 
 // mongoose
 const mongoose = require('mongoose');
@@ -24,10 +25,11 @@ const SECRETS = require('../config/secrets.json');
 const PORT = process.env.PORT || 8080;
 const web_routes = require('./routes/web.js');
 // const api_routes = require('./routes/api.js');
+const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 const session_opts = {
     saveUninitialized: true, // saved new sessions
     resave: false, // do not automatically write to the session store
-    store: new MongoStore({mongooseConnection: mongoose.connection}),
+    store: sessionStore,
     secret: SECRETS.session.secret,
     cookie: {
         httpOnly: true,
@@ -61,6 +63,15 @@ const User = require('./models/user');
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// Config socket.io with passport
+io.use(passportSocketIo.authorize({
+    key: 'connect.sid',
+    secret: SECRETS.session.secret,
+    store: sessionStore,
+    passport: passport,
+    cookieParser: cookieParser
+}));
 
 // Register routes
 app.use('/', web_routes);
