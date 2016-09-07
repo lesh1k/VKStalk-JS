@@ -14,7 +14,7 @@ module.exports = function(server) {
         socket.emit('connection', {message: 'Connection established.'});
         socket.on('join-room', join);
 
-        socket.on('stalk-request', stalked_id => {
+        socket.on('stalk-start', stalked_id => {
             // console.log(`Stalk request from ${username}, target: ${stalked_id}`);
             StalkedId.findOne({sid: stalked_id}).then(sid_data => {
                 if (sid_data.subscribers.indexOf(username) === -1) {

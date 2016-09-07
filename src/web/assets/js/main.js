@@ -52,7 +52,7 @@
 
         $btns.click(function() {
             var stalked_id = $(this).closest('.card').attr('id');
-            socket.emit('stalk-request', stalked_id);
+            socket.emit('stalk-start', stalked_id);
         });
     }
 
