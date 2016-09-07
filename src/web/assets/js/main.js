@@ -24,7 +24,7 @@
     function setupSocket() {
         var socket = socket_io.connect();
 
-        socket.on('connection', function(data) {
+        socket.on('connection', function() {
             STALKED_IDS.forEach(function(stalked_id) {
                 socket.emit('join-room', stalked_id);
             });
@@ -32,33 +32,58 @@
 
         socket.on('stalk-data', function(data) {
             var card = document.getElementById(data.stalked_id);
-            card.querySelector('.stalk-data').innerText = data.message;
+            if (card) {
+                card.querySelector('.stalk-data').innerText = data.message;
+            }
         });
 
         socket.on('disconnect', function() {
             $('.stalk-data').text('Disconnected...');
         });
 
-        setupStalkButton(socket);
-        setupStopButton(socket);
+        socket.on('stalk-remove', function(data) {
+            if (!data.error) {
+                $(document.getElementById(data.stalked_id)).parent().remove();
+            } else {
+                $(document.getElementById(data.stalked_id)).find('.stalk-data').text(data.error);
+            }
+        });
+
+        setupCardActions(socket);
+
     }
 
-    function setupStalkButton(socket) {
-        var $btns = $('.stalk-start');
+    function setupCardActions(socket) {
+        stalk(socket);
+        stop(socket);
+        remove(socket);
 
-        $btns.click(function() {
-            var stalked_id = $(this).closest('.card').attr('id');
-            socket.emit('stalk-start', stalked_id);
-        });
-    }
+        function stalk(socket) {
+            var $btns = $('.stalk-start');
 
-    function setupStopButton(socket) {
-        var $btns = $('.stalk-stop');
+            $btns.click(function() {
+                var stalked_id = $(this).closest('.card').attr('id');
+                socket.emit('stalk-start', stalked_id);
+            });
+        }
 
-        $btns.click(function() {
-            var stalked_id = $(this).closest('.card').attr('id');
-            socket.emit('stalk-stop', stalked_id);
-        });
+        function stop(socket) {
+            var $btns = $('.stalk-stop');
+
+            $btns.click(function() {
+                var stalked_id = $(this).closest('.card').attr('id');
+                socket.emit('stalk-stop', stalked_id);
+            });
+        }
+
+        function remove(socket) {
+            var $btns = $('.card-remove');
+
+            $btns.click(function() {
+                var stalked_id = $(this).closest('.card').attr('id');
+                socket.emit('stalk-remove', stalked_id);
+            });
+        }
     }
 
     function getStalkedIds() {

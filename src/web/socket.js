@@ -3,6 +3,7 @@
 const cluster = require('cluster');
 const path = require('path');
 const StalkedId = require('./models/stalked_id');
+const User = require('./models/user');
 
 
 module.exports = function(server) {
@@ -31,6 +32,21 @@ module.exports = function(server) {
         // });
 
         socket.on('stalk-stop', leave);
+        socket.on('stalk-remove', (stalked_id) => {
+            const stalked_ids = socket.request.user._doc.stalked_ids;
+            const room = stalked_id;
+            const index = stalked_ids.indexOf(stalked_id);
+
+            if (index !== -1) {
+                stalked_ids.splice(index, 1);
+                User.findOneAndUpdate({username: username}, {stalked_ids: stalked_ids}, () => {
+                    leave(room);
+                    socket.emit('stalk-remove', {error: null, message: 'Success!', stalked_id: stalked_id});
+                });
+            } else {
+                socket.emit('stalk-remove', {error: 'This user ID does not exist.', message: '', stalked_id: stalked_id});
+            }
+        });
 
         function join(room) {
             const stalked_id = room;
