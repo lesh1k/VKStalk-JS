@@ -31,9 +31,11 @@ router.route('/')
     })
     .post((req, res) => {
         // const action = req.body['action'];
+        const user_id_regex = /^[a-z0-9.\-_]{1,}$/i;
         const user_id = req.body['user-id'].trim();
+        const is_invalid_user_id = (!user_id || !user_id_regex.test(user_id));
 
-        if (!user_id) {
+        if (is_invalid_user_id) {
             return res.sendStatus(400);
         }
 
