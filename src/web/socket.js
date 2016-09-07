@@ -30,16 +30,7 @@ module.exports = function(server) {
         //     Object.keys(cluster.workers).forEach(id => cluster.workers[id].kill());
         // });
 
-        socket.on('stalk-stop', stalked_id => {
-            // console.log(io.nsps['/'].adapter.rooms);
-            // console.log(socket.rooms);
-            const room = io.nsps['/'].adapter.rooms[stalked_id];
-
-            debugger
-            // const worker_id = workers[stalked_id];
-            // cluster.workers[worker_id].kill();
-            // socket.disconnect();
-        });
+        socket.on('stalk-stop', leave);
 
         function join(room) {
             const stalked_id = room;
@@ -47,7 +38,7 @@ module.exports = function(server) {
             socket.emit('stalk-data', {stalked_id: stalked_id, message:'Connecting...'});
             StalkedId.findOneAndUpdate({sid: stalked_id}, {}, {upsert: true, new: true, setDefaultsOnInsert: true }).then(sid_data => {
                 if (sid_data.subscribers.indexOf(username) !== -1) {
-                    console.log(`Joining room ${room}`);
+                    console.log(`${username} is joining room ${room}`);
                     socket.join(room, err => {
                         if (err) {
                             console.log(err);
@@ -75,6 +66,46 @@ module.exports = function(server) {
                     socket.emit('stalk-data', {stalked_id: stalked_id, message: 'Stalker offline. Click "STALK" to turn it on.'});
                 }
             });
+        }
+
+        function leave(room) {
+            const stalked_id = room;
+            socket.emit('stalk-data', {stalked_id: stalked_id, message:'Disconnecting...'});
+
+            StalkedId.findOne({sid: stalked_id}).then(sid_data => {
+                const index = sid_data.subscribers.indexOf(username);
+                if (index === -1) {
+                    console.error(`Username ${username} is not subscribed to updates from ${stalked_id}`);
+                    return;
+                }
+
+
+                sid_data.subscribers.splice(index, 1);
+                StalkedId.update({_id: sid_data._id}, {$set: {subscribers: sid_data.subscribers}}).then(() => {
+                    console.log(`${username} is leaving room ${room}`);
+                    socket.leave(room, err => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+
+                    socket.emit('stalk-data', {stalked_id: stalked_id, message: 'Stalker offline. Click "STALK" to turn it on.'});
+
+                    if (!sid_data.subscribers.length) {
+                        killStalker(stalked_id);
+                    }
+                });
+            });
+        }
+
+        function killStalker(stalked_id) {
+            const worker_id = workers[stalked_id];
+            if (!worker_id) {
+                console.error(`Worker (ID=${worker_id}) stalking ${stalked_id} does not exist.`);
+                return;
+            }
+
+            cluster.workers[worker_id].kill();
         }
     });
 
