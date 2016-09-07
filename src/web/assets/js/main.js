@@ -18,7 +18,6 @@
 (function(socket_io) {
     'use strict';
     var STALKED_IDS = getStalkedIds();
-    console.log(STALKED_IDS);
 
     setupSocket();
 
@@ -26,15 +25,12 @@
         var socket = socket_io.connect();
 
         socket.on('connection', function(data) {
-            console.log(data);
             STALKED_IDS.forEach(function(stalked_id) {
-                console.log('Emitting join room', stalked_id);
                 socket.emit('join-room', stalked_id);
             });
         });
 
         socket.on('stalk-data', function(data) {
-            console.log(data);
             var card = document.getElementById(data.stalked_id);
             card.querySelector('.stalk-data').innerText = data.message;
         });
