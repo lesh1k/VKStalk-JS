@@ -9,7 +9,7 @@ block content
         section#add-user
             .row
                 .col.s12
-                    form(action='/', method='post')
+                    form#form-card-add(action='/', method='post')
                         .row
                             .input-field.col.s12
                                 input#user-id(type='text', name='user-id', value='', required)
@@ -21,18 +21,7 @@ block content
         section#stalkers
             .row
                 each stalk_id in user.stalked_ids
-                    .col.s12.m6
-                        .stalking-card.card.blue-grey.darken-1(id=stalk_id)
-                            .card-content.white-text
-                                span.card-title User ID:
-                                    span.user-id &nbsp;#{stalk_id}
-                                p.stalk-data
-
-                            .card-action
-                                a.stalk-start(href='javascript:void(0)') Stalk
-                                a.stalk-stop(href='javascript:void(0)') Stop
-                                a.report(href='javascript:void(0)') Reports
-                                a.card-remove(href='javascript:void(0)') Remove
+                    include ./includes/stalk_card.pug
 
 block scripts
     script(src='/node_m/socket.io-client/socket.io.js', charset='utf-8')
