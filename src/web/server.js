@@ -7,10 +7,18 @@ const path = require('path');
 const server = require('http').Server(app);
 const cookieParser = require('cookie-parser');
 const socket = require('./socket.js')(server);
+
+// mongoose
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+const DB_CONFIG = require(path.join(__dirname, '..', 'config', 'db.json'));
+const db_url = `${DB_CONFIG.driver}://${DB_CONFIG.user}:${DB_CONFIG.password}@${DB_CONFIG.url}:${DB_CONFIG.port}/${DB_CONFIG.db_name}`;
+mongoose.connect(db_url);
+
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 const SECRETS = require('../config/secrets.json');
 const PORT = process.env.PORT || 8080;
@@ -19,7 +27,7 @@ const web_routes = require('./routes/web.js');
 const session_opts = {
     saveUninitialized: true, // saved new sessions
     resave: false, // do not automatically write to the session store
-    // store: sessionStore,
+    store: new MongoStore({mongooseConnection: mongoose.connection}),
     secret: SECRETS.session.secret,
     cookie: {
         httpOnly: true,
@@ -44,7 +52,7 @@ app.use(body_parser.urlencoded({
 }));
 app.use(body_parser.json());
 app.use(cookieParser(SECRETS.session.secret));
-app.use(require('express-session')(session_opts));
+app.use(session(session_opts));
 
 // Configure passport
 app.use(passport.initialize());
@@ -53,11 +61,6 @@ const User = require('./models/user');
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
-// mongoose
-const DB_CONFIG = require(path.join(__dirname, '..', 'config', 'db.json'));
-const db_url = `${DB_CONFIG.driver}://${DB_CONFIG.user}:${DB_CONFIG.password}@${DB_CONFIG.url}:${DB_CONFIG.port}/${DB_CONFIG.db_name}`;
-mongoose.connect(db_url);
 
 // Register routes
 app.use('/', web_routes);
