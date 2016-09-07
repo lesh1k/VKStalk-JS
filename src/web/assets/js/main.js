@@ -23,7 +23,7 @@
     setupSocket();
 
     function setupSocket() {
-        var socket = socket_io.connect(window.location.origin);
+        var socket = socket_io.connect();
 
         socket.on('connection', function(data) {
             console.log(data);
@@ -48,7 +48,7 @@
     }
 
     function setupStalkButton(socket) {
-        var $btns = $('.stalk-user');
+        var $btns = $('.stalk-start');
 
         $btns.click(function() {
             var stalked_id = $(this).closest('.card').attr('id');
@@ -57,13 +57,12 @@
     }
 
     function setupStopButton(socket) {
-        // var $btns = $('.stop-worker');
-        //
-        // $btns.click(function() {
-        //     var path_parts = window.location.pathname.split('/');
-        //     var user_id = path_parts[path_parts.length - 1];
-        //     socket.emit('stop-worker', user_id);
-        // });
+        var $btns = $('.stalk-stop');
+
+        $btns.click(function() {
+            var stalked_id = $(this).closest('.card').attr('id');
+            socket.emit('stalk-stop', stalked_id);
+        });
     }
 
     function getStalkedIds() {
