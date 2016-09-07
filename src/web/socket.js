@@ -27,10 +27,6 @@ module.exports = function(server) {
             });
         });
 
-        // socket.on('disconnect', () => {
-        //     Object.keys(cluster.workers).forEach(id => cluster.workers[id].kill());
-        // });
-
         socket.on('stalk-stop', leave);
         socket.on('stalk-remove', (stalked_id) => {
             const stalked_ids = socket.request.user._doc.stalked_ids;
