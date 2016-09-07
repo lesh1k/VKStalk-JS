@@ -70,8 +70,24 @@ io.use(passportSocketIo.authorize({
     secret: SECRETS.session.secret,
     store: sessionStore,
     passport: passport,
-    cookieParser: cookieParser
+    cookieParser: cookieParser,
+    success: onAuthorizeSuccess,
+    fail: onAuthorizeFail
 }));
+
+function onAuthorizeSuccess(data, accept) {
+    console.log(`User ${data.user.username} successful connection to socket.io.`);
+    accept();
+}
+
+function onAuthorizeFail(data, message, error, accept) {
+    console.log('Failed connection to socket.io:', message);
+
+    if (error)
+        accept(new Error(message));
+    // this error will be sent to the user as a special error-package
+    // see: http://socket.io/docs/client-api/#socket > error-object
+}
 
 // Register routes
 app.use('/', web_routes);
