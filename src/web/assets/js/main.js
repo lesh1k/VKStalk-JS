@@ -101,6 +101,7 @@
         stalk(socket);
         stop(socket);
         remove(socket);
+        cancelCardReveal();
 
         function stalk(socket) {
             $(document).on('click', '.stalk-start', function() {
@@ -120,6 +121,12 @@
             $(document).on('click', '.card-remove', function() {
                 var stalked_id = $(this).closest('.card').attr('id');
                 socket.emit('stalk-remove', stalked_id);
+            });
+        }
+
+        function cancelCardReveal() {
+            $(document).on('click', '.deactivator', function() {
+                $(this).closest('.card-reveal').find('.card-title').click();
             });
         }
     }

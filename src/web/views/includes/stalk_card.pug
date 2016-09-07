@@ -3,10 +3,18 @@
         .card-content.white-text
             span.card-title User ID:
                 span.user-id &nbsp;#{stalk_id}
-            p.stalk-data
+            p.stalk-data.white-text
 
         .card-action
             a.stalk-start(href='javascript:void(0)') Stalk
             a.stalk-stop(href='javascript:void(0)') Stop
             a.report(href='javascript:void(0)') Reports
-            a.card-remove(href='javascript:void(0)') Remove
+            a.activator(href='javascript:void(0)') Remove
+
+        .card-reveal
+            span.card-title.grey-text.text-darken-4 Remove
+                span.user-id &nbsp;#{stalk_id}?
+            br
+            .row
+                button.deactivator.btn-flat.col.s6.blue-grey.lighten-5.blue-grey-text Cancel
+                button.card-remove.btn-flat.col.s6.red.lighten-1 Remove
