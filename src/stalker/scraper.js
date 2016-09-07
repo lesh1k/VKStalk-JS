@@ -86,7 +86,7 @@ function scrape() {
         logger.error('[CRITICAL] Caught exception in scrape()', err, {user_id: USER_ID, critical: true});
         setTimeout(() => {
             console.log('[CRITICAL ERROR] The process will terminate now.');
-            console.log(`For more info see the logs`);
+            console.log('For more info see the logs');
             process.exit(1);
         }, 2000);
     });
