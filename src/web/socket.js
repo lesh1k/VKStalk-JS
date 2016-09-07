@@ -13,7 +13,7 @@ module.exports = function(server) {
     io.on('connection', (socket) => {
         const username = socket.request.user._doc.username;
         socket.emit('connection', {message: 'Connection established.'});
-        socket.on('join-room', join);
+        socket.on('stalk-join', join);
 
         socket.on('stalk-start', stalked_id => {
             // console.log(`Stalk request from ${username}, target: ${stalked_id}`);
@@ -29,19 +29,21 @@ module.exports = function(server) {
 
         socket.on('stalk-stop', leave);
         socket.on('stalk-remove', (stalked_id) => {
-            const stalked_ids = socket.request.user._doc.stalked_ids;
-            const room = stalked_id;
-            const index = stalked_ids.indexOf(stalked_id);
+            User.findOne({username: username}).then(user => {
+                const stalked_ids = user.stalked_ids;
+                const room = stalked_id;
+                const index = stalked_ids.indexOf(stalked_id);
 
-            if (index !== -1) {
-                stalked_ids.splice(index, 1);
-                User.findOneAndUpdate({username: username}, {stalked_ids: stalked_ids}, () => {
-                    leave(room);
-                    socket.emit('stalk-remove', {error: null, message: 'Success!', stalked_id: stalked_id});
-                });
-            } else {
-                socket.emit('stalk-remove', {error: 'This user ID does not exist.', message: '', stalked_id: stalked_id});
-            }
+                if (index !== -1) {
+                    stalked_ids.splice(index, 1);
+                    User.findOneAndUpdate({username: username}, {stalked_ids: stalked_ids}, () => {
+                        leave(room);
+                        socket.emit('stalk-remove', {error: null, message: 'Success!', stalked_id: stalked_id});
+                    });
+                } else {
+                    socket.emit('stalk-remove', {error: 'This user ID does not exist.', message: '', stalked_id: stalked_id});
+                }
+            });
         });
 
         function join(room) {

@@ -4,6 +4,18 @@
 (function() {
     'use strict';
 
+    $.fn.extend({
+        serializeObject: function() {
+            var form = this[0];
+            var data = $(form).serializeArray();
+            var obj = {};
+            $.each(data, function(k, v) {
+                obj[v.name] = v.value;
+            });
+            return obj;
+        },
+    });
+
     $(function() {
         $('.button-collapse').sideNav({
             edge: 'right'
@@ -26,9 +38,11 @@
 
         socket.on('connection', function() {
             STALKED_IDS.forEach(function(stalked_id) {
-                socket.emit('join-room', stalked_id);
+                socket.emit('stalk-join', stalked_id);
             });
         });
+
+        // socket.on
 
         socket.on('stalk-data', function(data) {
             var card = document.getElementById(data.stalked_id);
@@ -49,8 +63,38 @@
             }
         });
 
+        setupCardAddition(socket);
         setupCardActions(socket);
 
+    }
+
+    function setupCardAddition(socket) {
+        var $form = $('#form-card-add');
+
+        $form.submit(function(e) {
+            e.preventDefault();
+            var data = $form.serializeObject();
+
+            $.ajax({
+                    url: $form.attr('action'),
+                    method: $form.attr('method'),
+                    data: data
+                })
+                .done(function(response) {
+                    if (response.error) {
+                        console.error(response.error);
+                        return;
+                    }
+
+                    $form[0].reset();
+                    $form.find('input').focus();
+                    $('#stalkers > .row:first-child').prepend(response.html);
+                    socket.emit('stalk-join', response.stalked_id);
+                })
+                .fail(function(response) {
+                    console.error(response);
+                });
+        });
     }
 
     function setupCardActions(socket) {
@@ -59,27 +103,21 @@
         remove(socket);
 
         function stalk(socket) {
-            var $btns = $('.stalk-start');
-
-            $btns.click(function() {
+            $(document).on('click', '.stalk-start', function() {
                 var stalked_id = $(this).closest('.card').attr('id');
                 socket.emit('stalk-start', stalked_id);
             });
         }
 
         function stop(socket) {
-            var $btns = $('.stalk-stop');
-
-            $btns.click(function() {
+            $(document).on('click', '.stalk-stop', function() {
                 var stalked_id = $(this).closest('.card').attr('id');
                 socket.emit('stalk-stop', stalked_id);
             });
         }
 
         function remove(socket) {
-            var $btns = $('.card-remove');
-
-            $btns.click(function() {
+            $(document).on('click', '.card-remove', function() {
                 var stalked_id = $(this).closest('.card').attr('id');
                 socket.emit('stalk-remove', stalked_id);
             });

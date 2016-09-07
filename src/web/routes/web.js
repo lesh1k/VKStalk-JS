@@ -36,16 +36,40 @@ router.route('/')
         const is_invalid_user_id = (!user_id || !user_id_regex.test(user_id));
 
         if (is_invalid_user_id) {
-            return res.sendStatus(400);
+            return res.json({
+                error: 'User ID invalid. Allowed are only chars, numbers and .-_',
+                stalked_id: user_id
+            });
         }
 
         if (req.user.stalked_ids.indexOf(user_id) === -1) {
             req.user.stalked_ids.push(user_id);
-            User.update({_id: req.user._id}, {$set: {stalked_ids: req.user.stalked_ids}}, () => {
-                res.render('index');
+            User.update({
+                _id: req.user._id
+            }, {
+                $set: {
+                    stalked_ids: req.user.stalked_ids
+                }
+            }, () => {
+                res.render('includes/stalk_card', {stalk_id: user_id}, (err, html) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    res.json({
+                        error: null,
+                        message: 'User ID added successfully',
+                        stalked_id: user_id,
+                        html: html
+                    });
+                });
             });
         } else {
-            res.send('This user ID is already in your list.');
+            res.json({
+                error: 'This user ID is already in your list.',
+                stalked_id: user_id
+            });
         }
 
 
@@ -71,9 +95,13 @@ router.route('/register')
     .post((req, res, next) => {
         const username = req.body.username;
         const password = req.body.password;
-        User.register(new User({username: username}), password, (err, user) => {
+        User.register(new User({
+            username: username
+        }), password, (err, user) => {
             if (err) {
-                return res.render('login', {error: err.message});
+                return res.render('login', {
+                    error: err.message
+                });
             }
 
             passport.authenticate('local')(req, res, () => {
