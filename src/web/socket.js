@@ -74,7 +74,7 @@ module.exports = function(server) {
                             io.sockets.to(room).emit('stalk-data', {stalked_id: stalked_id, message: buffer.toString('utf8')});
                         });
                     } else {
-                        io.sockets.to(room).emit('stalk-data', {stalked_id: stalked_id, message:'Connected. Waiting for a message...'});
+                        socket.emit('stalk-data', {stalked_id: stalked_id, message:'Connected. Waiting for a message...', is_reconnect: true});
                     }
                 } else {
                     socket.emit('stalk-data', {stalked_id: stalked_id, message: 'Stalker offline. Click "STALK" to turn it on.'});
