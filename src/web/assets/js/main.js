@@ -24,6 +24,17 @@
         $('.dropdown-button').dropdown({
             hover: true
         });
+
+        $(document).on('cardHeightUpdate', '.card', function(e, data) {
+            var $card_data = $(this).find('.stalk-data');
+            var min_height = parseInt($card_data.css('min-height'), 10);
+            var height = $card_data.height();
+            if (data && data.reset) {
+                $card_data.css('min-height', 0);
+            } else if (min_height < height) {
+                $card_data.css('min-height', height);
+            }
+        });
     });
 })();
 
@@ -42,17 +53,17 @@
             });
         });
 
-        // socket.on
-
         socket.on('stalk-data', function(data) {
             var card = document.getElementById(data.stalked_id);
             if (card) {
                 card.querySelector('.stalk-data').innerText = data.message;
+                $(card).trigger('cardHeightUpdate');
             }
         });
 
         socket.on('disconnect', function() {
             $('.stalk-data').text('Disconnected...');
+            $('.card').trigger('cardHeightUpdate');
         });
 
         socket.on('stalk-remove', function(data) {
@@ -105,15 +116,19 @@
 
         function stalk(socket) {
             $(document).on('click', '.stalk-start', function() {
-                var stalked_id = $(this).closest('.card').attr('id');
+                var $card = $(this).closest('.card');
+                var stalked_id = $card.attr('id');
                 socket.emit('stalk-start', stalked_id);
             });
         }
 
         function stop(socket) {
             $(document).on('click', '.stalk-stop', function() {
-                var stalked_id = $(this).closest('.card').attr('id');
+                var $card = $(this).closest('.card');
+                var stalked_id = $card.attr('id');
                 socket.emit('stalk-stop', stalked_id);
+                $card.trigger('cardHeightUpdate', {reset: true});
+                // $card.find('.stalk-start')
             });
         }
 
