@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/lesh1k/VKStalk-JS#readme",
   "dependencies": {
-    "angular": "^1.5.8",
     "body-parser": "^1.15.2",
     "cheerio": "^0.20.0",
     "cli-table": "^0.3.1",
