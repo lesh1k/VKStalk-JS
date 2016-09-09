@@ -1,0 +1,11 @@
+table.responsive-table.highlight
+    thead
+        tr
+            th Track
+            th Play count
+
+    tbody
+        each entry in data
+            tr
+                td= entry.track
+                td= entry.play_count

@@ -1,0 +1,34 @@
+.row
+    .col.s12
+        .card.horizontal
+            .card-image
+                img(src=data['Profile photo'])
+            .card-stacked
+                .card-content
+                    .card-title= data['Name']
+                        small.right &nbsp;
+                            if data.isOnline
+                                | online&nbsp;
+                                if data.isFromMobile
+                                    i.material-icons stay_primary_portrait
+                            else
+                                = data['Last seen']
+
+                        br
+                        small
+                            if data.isListeningToMusic
+                                i.material-icons audiotrack
+                            = data['Current status']
+
+                    ul.collapsible.z-depth-0(data-collapsible='expandable')
+                        li
+                            .collapsible-header.z-depth-0 More info
+                                i.material-icons.right arrow_drop_down
+                            .collapsible-body
+                                table.responsive-table.striped
+                                    tbody
+                                        each value, key in data
+                                            tr
+                                                td
+                                                    strong= key
+                                                td= value
