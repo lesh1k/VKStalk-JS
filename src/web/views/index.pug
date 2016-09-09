@@ -20,7 +20,7 @@ block content
 
         section#stalkers
             .row
-                each stalk_id in user.stalked_ids
+                each stalk_id in user.stalked_ids.reverse()
                     include ./includes/stalk_card.pug
 
 block scripts
