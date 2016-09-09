@@ -25,6 +25,8 @@
             hover: true
         });
 
+        $('.collapsible').collapsible();
+
         $(document).on('cardHeightUpdate', '.card', function(e, data) {
             var $card_data = $(this).find('.stalk-data');
             var min_height = parseInt($card_data.css('min-height'), 10);

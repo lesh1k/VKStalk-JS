@@ -3,10 +3,12 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const cluster = require('cluster');
+const path = require('path');
+const fs = require('fs');
 
 const User = require('../models/user');
 const helpers = require('../helpers');
-// const report = require('../../stalker/report.js');
 
 module.exports = router;
 
@@ -48,7 +50,9 @@ router.route('/')
                     stalked_ids: req.user.stalked_ids
                 }
             }, () => {
-                res.render('includes/stalk_card', {stalk_id: user_id}, (err, html) => {
+                res.render('includes/stalk_card', {
+                    stalk_id: user_id
+                }, (err, html) => {
                     if (err) {
                         console.error(err);
                         return;
@@ -108,29 +112,43 @@ router.route('/logout')
         res.redirect('/');
     });
 
-router.route('/reports/:stalked_id')
+router.route('/reports/:stalked_id/:report_type?')
+    .get((req, res, next) => {
+        if (!helpers.isValidId(req.params.stalked_id)) {
+            return res.sendStatus(400);
+        }
+
+        next();
+    })
     .get((req, res) => {
         const stalked_id = req.params.stalked_id;
-        if (!helpers.isValidId(stalked_id)) {
-            return res.sendStatus({
-                error: 'User ID invalid. Allowed are only chars, numbers and .-_',
-                stalked_id: user_id
-            });
+        const report_type = req.params.report_type;
+        if (!helpers.isValidId(report_type)) {
+            return res.sendStatus(400, 'Invalid characters in report type');
         }
-        res.render('reports', {stalked_id: req.params.stalked_id});
 
-        // switch (action) {
-        //     case 'report':
-        //         report('music', user_id)
-        //             .then(data => {
-        //                 res.json(data);
-        //             });
-        //         break;
-        //     case 'stalk':
-        //         res.redirect(`/stalk/${user_id}`);
-        //         break;
-        //     default:
-        //         res.send(`Requested to ${action} on ${user_id}`);
-        //         break;
-        // }
+        cluster.setupMaster({
+            exec: path.resolve(__dirname, '../../vkstalk'),
+            args: ['report', '--raw-data', '--type', report_type, stalked_id],
+            silent: true
+        });
+
+        const worker = cluster.fork();
+        worker.on('message', data => {
+            const view_path = `includes/reports/${report_type}.pug`;
+
+            delete data._id;
+            res.render(view_path, {data: data}, (err, html) => {
+                if (err) {
+                    console.error(err);
+                    html = 'Error generating report';
+                }
+
+                res.render('reports', {
+                    stalked_id: req.params.stalked_id,
+                    report_type: report_type,
+                    report: html
+                });
+            });
+        });
     });
