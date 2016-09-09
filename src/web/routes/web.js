@@ -5,6 +5,7 @@ const router = express.Router();
 const passport = require('passport');
 
 const User = require('../models/user');
+const helpers = require('../helpers');
 // const report = require('../../stalker/report.js');
 
 module.exports = router;
@@ -26,16 +27,12 @@ function requireAuthentication(req, res, next) {
 
 router.route('/')
     .get((req, res) => {
-        console.log(req.user);
         res.render('index');
     })
     .post((req, res) => {
-        // const action = req.body['action'];
-        const user_id_regex = /^[a-z0-9.\-_]{1,}$/i;
         const user_id = req.body['user-id'].trim();
-        const is_invalid_user_id = (!user_id || !user_id_regex.test(user_id));
 
-        if (is_invalid_user_id) {
+        if (!helpers.isIdValid(user_id)) {
             return res.json({
                 error: 'User ID invalid. Allowed are only chars, numbers and .-_',
                 stalked_id: user_id
@@ -129,7 +126,7 @@ router.route('/logout')
         res.redirect('/');
     });
 
-router.route('/stalk/:user_id')
+router.route('/reports/:stalked_id')
     .get((req, res) => {
-        res.render('stalk');
+        res.render('reports', {stalked_id: req.params.stalked_id});
     });
