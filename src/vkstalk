@@ -4,6 +4,7 @@
 'use strict';
 
 const program = require('commander');
+const cluster = require('cluster');
 const scraper = require('./stalker/scraper.js');
 const report = require('./stalker/report.js');
 const format = require('./stalker/format.js');
@@ -24,13 +25,23 @@ program
     .command('report [user_id]')
     .description('Generate a report/summary on data collected about the user with ID=user_id')
     .option('-t, --type [type]', 'Generate a specific report. Options: general, music.')
+    .option('--raw-data', 'Return raw data, without formatting')
     .action((user_id, options) => {
         const type = options.type || 'music';
         console.log(`\nRequested ${type} report for user with ID=${user_id}\n`);
         report(type, user_id)
             .then(data => {
-                let formatter_type = `report${helpers.capitalize(type)}`;
-                console.log(format(formatter_type, data));
+                if (options.rawData) {
+                    if (cluster.isWorker) {
+                        process.send(data);
+                    } else {
+                        console.log(data);
+                    }
+                } else {
+                    let formatter_type = `report${helpers.capitalize(type)}`;
+                    console.log(format(formatter_type, data));
+                }
+
                 process.exit();
             });
     });

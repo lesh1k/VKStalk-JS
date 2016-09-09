@@ -19,7 +19,7 @@ module.exports = function generateReport(type) {
         return reporter.apply(null, args);
     }
 
-    const message = `No summarizer for type ${type}`;
+    const message = Promise.resolve(`No report of type ${type}`);
     logger.error(message, {type: type, args: [].slice.call(arguments)})
     return message;
 };
