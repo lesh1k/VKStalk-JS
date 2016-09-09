@@ -32,7 +32,7 @@ router.route('/')
     .post((req, res) => {
         const user_id = req.body['user-id'].trim();
 
-        if (!helpers.isIdValid(user_id)) {
+        if (!helpers.isValidId(user_id)) {
             return res.json({
                 error: 'User ID invalid. Allowed are only chars, numbers and .-_',
                 stalked_id: user_id
@@ -68,24 +68,6 @@ router.route('/')
                 stalked_id: user_id
             });
         }
-
-
-
-
-        // switch (action) {
-        //     case 'report':
-        //         report('music', user_id)
-        //             .then(data => {
-        //                 res.json(data);
-        //             });
-        //         break;
-        //     case 'stalk':
-        //         res.redirect(`/stalk/${user_id}`);
-        //         break;
-        //     default:
-        //         res.send(`Requested to ${action} on ${user_id}`);
-        //         break;
-        // }
     });
 
 router.route('/register')
@@ -128,5 +110,27 @@ router.route('/logout')
 
 router.route('/reports/:stalked_id')
     .get((req, res) => {
+        const stalked_id = req.params.stalked_id;
+        if (!helpers.isValidId(stalked_id)) {
+            return res.sendStatus({
+                error: 'User ID invalid. Allowed are only chars, numbers and .-_',
+                stalked_id: user_id
+            });
+        }
         res.render('reports', {stalked_id: req.params.stalked_id});
+
+        // switch (action) {
+        //     case 'report':
+        //         report('music', user_id)
+        //             .then(data => {
+        //                 res.json(data);
+        //             });
+        //         break;
+        //     case 'stalk':
+        //         res.redirect(`/stalk/${user_id}`);
+        //         break;
+        //     default:
+        //         res.send(`Requested to ${action} on ${user_id}`);
+        //         break;
+        // }
     });
