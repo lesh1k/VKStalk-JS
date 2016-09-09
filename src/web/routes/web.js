@@ -91,6 +91,30 @@ router.route('/')
         // }
     });
 
+router.route('/register')
+    .post((req, res, next) => {
+        const username = req.body.username;
+        const password = req.body.password;
+        User.register(new User({
+            username: username
+        }), password, (err, user) => {
+            if (err) {
+                return res.render('login', {
+                    error: err.message
+                });
+            }
+
+            passport.authenticate('local')(req, res, () => {
+                req.session.save(err => {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.redirect('/');
+                });
+            });
+        });
+    });
+
 router.route('/login')
     .get((req, res) => {
         res.render('login');
