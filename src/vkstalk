@@ -12,7 +12,7 @@ const helpers = require('./stalker/helpers/helpers.js');
 
 
 program
-    .version('1.0.0-alpha.1');
+    .version('1.0.0-alpha.6');
 
 program
     .command('stalk [user_id]')
