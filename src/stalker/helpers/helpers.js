@@ -6,12 +6,6 @@ const cluster = require('cluster');
 
 module.exports = exports = {};
 
-exports.clearConsole = function() {
-    logger.debug('Function call. clearConsole()', {args: [].slice.call(arguments)});
-    // console.log('\x1Bc');
-    process.stdout.write('\x1Bc');
-};
-
 exports.getProcessLaunchDate = function() {
     logger.debug('Function call. getProcessLaunchDate()', {args: [].slice.call(arguments)});
     // The result is not absolutely precise.
