@@ -57,7 +57,6 @@ exports.convertTimeTo24hrs = function(time) {
 exports.terminate = function(reason, message) {
     logger.debug('Function call. terminate(reason, message)', {args: [].slice.call(arguments)});
     logger.error('Manual call of process.exit()', {reason: reason, message: message});
-    console.log(`\n\nProcess exited\nReason: ${reason}\nMessage: ${message}`);
     process.exit();
 };
 
@@ -67,12 +66,14 @@ exports.monitorMemoryLeaks = function() {
     });
 };
 
-exports.sendData = function(data) {
+exports.sendData = function(data, fallback_to_console=false) {
     if (cluster.isWorker) {
         logger.debug('Sending data to master, via process.send', {data: data});
         process.send(data);
-    } else {
+    } else if (fallback_to_console) {
         logger.info('Call to sendData(data) from the Master process. process.send not availailable, falling back to console.log');
         console.log(data);
+    } else {
+        logger.info('Call to sendData(data) from the Master process. process.send not availailable, fallback to console.log forbidden. Nothing to do here');
     }
 };
