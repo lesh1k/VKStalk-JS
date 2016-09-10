@@ -1,0 +1,61 @@
+#!/usr/bin/env node
+
+/* eslint no-console: 0 */
+'use strict';
+
+const program = require('commander');
+const cluster = require('cluster');
+const scraper = require('./stalker/scraper.js');
+const report = require('./stalker/report.js');
+const format = require('./stalker/format.js');
+const helpers = require('./stalker/helpers/helpers.js');
+
+
+program
+    .version('1.0.0-alpha.6');
+
+program
+    .command('stalk [user_id]')
+    .description('Collect data and monitor updates for user with ID=user_id')
+    .action(user_id => {
+        scraper.work(user_id);
+    });
+
+program
+    .command('report [user_id]')
+    .description('Generate a report/summary on data collected about the user with ID=user_id')
+    .option('-t, --type [type]', 'Generate a specific report. Options: general, music.')
+    .option('--raw-data', 'Return raw data, without formatting')
+    .action((user_id, options) => {
+        const type = options.type || 'music';
+        console.log(`\nRequested ${type} report for user with ID=${user_id}\n`);
+        report(type, user_id)
+            .then(data => {
+                if (options.rawData) {
+                    if (cluster.isWorker) {
+                        process.send(data);
+                    } else {
+                        console.log(data);
+                    }
+                } else {
+                    let formatter_type = `report${helpers.capitalize(type)}`;
+                    console.log(format(formatter_type, data));
+                }
+
+                process.exit();
+            });
+    });
+
+program
+    .command('help')
+    .description('Display information about accepted commands and options')
+    .action(() => {
+        program.help();
+        process.exit();
+    });
+
+program.parse(process.argv);
+
+// let missing_command_text = 'Unknown command.\nUse `vkstalk help` to see the list of available commands and options';
+// process.stdout.write(missing_command_text);
+// process.exit();
