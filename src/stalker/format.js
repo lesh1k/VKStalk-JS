@@ -24,32 +24,6 @@ function format(type) {
     logger.error('No formatter for type', type);
 }
 
-function formatReportMusic(docs) {
-    if (!docs.length) {
-        return 'No music tracks were found';
-    }
-
-    let table = new Table({
-        head: ['Track', 'Times played']
-    });
-
-    docs.forEach(doc => {
-        table.push([doc.track, doc.play_count]);
-    });
-
-    return table.toString();
-}
-
-function formatReportGeneral(doc) {
-    let result = '';
-    for (let k in doc) {
-        if (k === '_id') continue;
-        result += `${k.trim().replace(':', '')}: ${doc[k]}\n`;
-    }
-
-    return result;
-}
-
 function formatLastSeenTime(last_seen) {
     const regex = /\d{1,2}\:\d{2}\s{1}(am|pm){1}/i;
     if (regex.test(last_seen)) {
