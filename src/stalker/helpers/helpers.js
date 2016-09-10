@@ -68,6 +68,9 @@ exports.sendData = function(data, fallback_to_console=false) {
         logger.info('Call to sendData(data) from the Master process. process.send not availailable, falling back to console.log');
         console.log(data);
     } else {
-        logger.info('Call to sendData(data) from the Master process. process.send not availailable, fallback to console.log forbidden. Nothing to do here');
+        let message = 'Call to sendData(data) from the Master process.';
+        message += 'process.send not availailable, fallback to console.log forbidden.';
+        message += 'process.send not availailable, fallback to console.log forbidden. Nothing to do here';
+        logger.info(message, {data: data});
     }
 };

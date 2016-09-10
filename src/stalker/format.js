@@ -9,8 +9,6 @@ module.exports = format;
 
 const FORMATTERS = {
     'lastSeenTime': formatLastSeenTime,
-    'reportMusic': formatReportMusic,
-    'reportGeneral': formatReportGeneral,
     'retryConnectionMessage': formatRetryConnectionMessage
 };
 
