@@ -8,6 +8,7 @@ const cluster = require('cluster');
 const scraper = require('./stalker/scraper.js');
 const report = require('./stalker/report.js');
 const helpers = require('./stalker/helpers/helpers.js');
+const logger = require('./stalker/logger');
 
 
 program
@@ -27,10 +28,10 @@ program
     // .option('--raw-data', 'Return raw data, without formatting')
     .action((user_id, options) => {
         const type = options.type || 'music';
-        console.log(`\nRequested ${type} report for user with ID=${user_id}\n`);
+        logger.info(`Requested ${type} report for user with ID=${user_id}`);
         report(type, user_id)
             .then(data => {
-                helpers.sendData(data);
+                helpers.sendData(data, true);
                 process.exit();
             });
     });
