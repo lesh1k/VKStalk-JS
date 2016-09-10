@@ -9,6 +9,13 @@ const CONFIG = require('../config/config.json');
 
 const logger = new winston.Logger({
     transports: [
+        new (winston.transports.Console)({
+            name: 'stalker-main-console',
+            level: CONFIG.log_level || 'info',
+            timestamp: true,
+            showLevel: true,
+            colorize: true
+        }),
         new (dailyRotateFile)({
             name: 'error-file-daily',
             level: 'error',
