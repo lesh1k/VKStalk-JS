@@ -2,6 +2,7 @@
 
 const logger = require('../logger.js');
 const memwatch = require('memwatch-next');
+const cluster = require('cluster');
 
 module.exports = exports = {};
 
@@ -64,4 +65,14 @@ exports.monitorMemoryLeaks = function() {
     memwatch.on('leak', function(info) {
         logger.warn('Possible MEMORY LEAK detected', info);
     });
+};
+
+exports.sendData = function(data) {
+    if (cluster.isWorker) {
+        logger.debug('Sending data to master, via process.send', {data: data});
+        process.send(data);
+    } else {
+        logger.info('Call to sendData(data) from the Master process. process.send not availailable, falling back to console.log');
+        console.log(data);
+    }
 };
