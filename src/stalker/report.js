@@ -20,7 +20,7 @@ module.exports = function generateReport(type) {
     }
 
     const message = Promise.resolve(`No report of type ${type}`);
-    logger.error(message, {type: type, args: [].slice.call(arguments)})
+    logger.error(message, {type: type, args: [].slice.call(arguments)});
     return message;
 };
 
