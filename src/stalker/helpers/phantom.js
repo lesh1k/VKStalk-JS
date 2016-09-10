@@ -71,7 +71,7 @@ function setupPhantomCleanupOnNodeProcessTermination(instance) {
 }
 
 function phantomKill(instance) {
-    logger.info('Exiting phantom instance', {args: [].slice.call(arguments)});
+    logger.info('Exiting phantom instance');
     instance.kill();
 }
 

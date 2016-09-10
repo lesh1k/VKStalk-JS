@@ -14,7 +14,8 @@ const logger = new winston.Logger({
             level: CONFIG.log_level || 'info',
             timestamp: true,
             showLevel: true,
-            colorize: true
+            colorize: true,
+            prettyPrint: true
         }),
         new (dailyRotateFile)({
             name: 'error-file-daily',

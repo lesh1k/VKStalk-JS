@@ -4,7 +4,6 @@
 'use strict';
 
 const program = require('commander');
-const cluster = require('cluster');
 const scraper = require('./stalker/scraper.js');
 const report = require('./stalker/report.js');
 const helpers = require('./stalker/helpers/helpers.js');

@@ -36,69 +36,111 @@ helpers.monitorMemoryLeaks();
 
 
 function scrape() {
-    logger.debug('Function call. scrape()', {args: [].slice.call(arguments)});
-    logger.info('Start scraping', {user_id: USER_ID});
-    co(function*() {
-        logger.info('Fetch HTML', {user_id: USER_ID});
-        const html = yield * getPageContent(URL);
-        const $ = cheerio.load(html);
-        if (!isUserPageOpen($)) {
-            logger.error('Cannot scrape page. !isUserPageOpen($) == true', {user_id: USER_ID, url: URL});
-            logger.info('Scrape round skipped. Retry after timeout', {user_id: USER_ID});
-            helpers.clearConsole();
-            const message = format('retryConnectionMessage', ++retry_count, CONFIG.max_retry_attempts, USER_ID, URL);
-            console.log(message);
-
-            if (retry_count >= CONFIG.max_retry_attempts) {
-                helpers.terminate('Max retry attempts reached.', `Failed ${retry_count} of ${CONFIG.max_retry_attempts} attempts.`);
-            }
-            return;
-            // helpers.terminate('Cannot scrape page', 'Profile is either hidden, not existing or deleted');
-        }
-        retry_count = 0;
-
-        logger.info('Extract user data from fetched HTML', {user_id: USER_ID});
-        const user_data = collectUserData($);
-
-        logger.info('Check if new data has updates', {user_id: USER_ID, new_user_data: user_data});
-        const user_updates = yield * checkUserDataForUpdates(user_data);
-        if (user_updates) {
-            logger.info('Write user data to DB', {user_id: USER_ID, data: user_data, updates: user_updates});
-            yield collection.insert(user_data);
-            logs_written++;
-        }
-
-        logger.info('Format data for console output', {user_id: USER_ID, data: user_data});
-        const formatted_data = prepareConsoleOutput(user_data, user_updates);
-        helpers.clearConsole();
-        logger.debug('Write formatted data to console', {user_id: USER_ID, formatted_data: formatted_data});
-        process.stdout.write(formatted_data);
-    })
-    .then(() => {
-        const timeout = CONFIG.interval * 1000;
-        logger.debug('Set timeout for next scrape() call.', {user_id: USER_ID, timeout: timeout});
-        if (retry_count) {
-            console.log(`Timeout ${timeout / 1000} seconds`);
-        }
-        setTimeout(scrape, timeout);
-    })
-    .catch(err => {
-        logger.error('[CRITICAL] Caught exception in scrape()', err, {user_id: USER_ID, critical: true});
-        setTimeout(() => {
-            console.log('[CRITICAL ERROR] The process will terminate now.');
-            console.log('For more info see the logs');
-            process.exit(1);
-        }, 2000);
+    logger.debug('Function call. scrape()', {
+        args: [].slice.call(arguments)
     });
+
+    logger.info('Start scraping', {
+        user_id: USER_ID
+    });
+
+    co(function*() {
+            logger.info('Fetch HTML', {
+                user_id: USER_ID
+            });
+            const html = yield* getPageContent(URL);
+            const $ = cheerio.load(html);
+            if (!isUserPageOpen($)) {
+                retry_count++;
+                return;
+            }
+            retry_count = 0;
+
+            logger.info('Extract user data from fetched HTML', {
+                user_id: USER_ID
+            });
+
+            const user_data = collectUserData($);
+
+            logger.info('Check if new data has updates', {
+                user_id: USER_ID
+            });
+
+            const user_updates = yield* checkUserDataForUpdates(user_data);
+            if (user_updates) {
+                logger.info('Write user data to DB', {
+                    user_id: USER_ID,
+                    updates: user_updates
+                });
+                yield collection.insert(user_data);
+                logs_written++;
+            }
+
+            const data = {
+                user: user_data,
+                updates: user_updates
+            };
+
+            logger.info('Send data if listeners available', {
+                user_id: USER_ID,
+                data: data
+            });
+
+            helpers.sendData(data);
+        })
+        .then(() => {
+            const timeout = CONFIG.interval * 1000;
+            logger.info('Set timeout for next scrape() call.', {
+                user_id: USER_ID,
+                timeout: timeout
+            });
+            if (retry_count) {
+                logger.error('Cannot scrape page. !isUserPageOpen($) == true', {
+                    user_id: USER_ID,
+                    url: URL
+                });
+                logger.info('Scrape round skipped. Retry after timeout', {
+                    user_id: USER_ID
+                });
+
+                const message = format('retryConnectionMessage', retry_count, CONFIG.max_retry_attempts, USER_ID, URL, timeout);
+                logger.warn(message);
+                helpers.sendData({
+                    error: message
+                });
+
+                if (retry_count >= CONFIG.max_retry_attempts) {
+                    helpers.terminate('Max retry attempts reached.', `Failed ${retry_count} of ${CONFIG.max_retry_attempts} attempts.`);
+                }
+            }
+            setTimeout(scrape, timeout);
+        })
+        .catch(err => {
+            logger.error('[CRITICAL] Caught exception in scrape()', err, {
+                user_id: USER_ID,
+                critical: true
+            });
+
+            helpers.sendData({
+                error: '[CRITICAL ERROR] The process will terminate now. For more info see the logs'
+            });
+            setTimeout(() => {
+                process.exit(1);
+            }, 2000);
+        });
 }
 
 function* getPageContent(url) {
     if (!instance) {
-        logger.debug('Yield new phantom instance', {user_id: USER_ID});
-        instance = yield * ph.initPhantomInstance();
+        logger.debug('Yield new phantom instance', {
+            user_id: USER_ID
+        });
+        instance = yield* ph.initPhantomInstance();
     }
-    console.log('\nFetching data...');
-    const html = yield * ph.fetchPageContent(url, instance, false);
+
+    logger.info('Fetching data...');
+    helpers.sendData('Fetching data...');
+    const html = yield* ph.fetchPageContent(url, instance, false);
 
     return html;
 }
@@ -149,7 +191,7 @@ function* checkUserDataForUpdates(data) {
         return data;
     }
 
-    const last_document = yield * db_helpers.getLastUserDocument(collection, USER_ID);
+    const last_document = yield* db_helpers.getLastUserDocument(collection, USER_ID);
     const updates = getDiff(last_document, data);
 
     return updates;
@@ -169,30 +211,9 @@ function getDiff(last_document, data) {
         }
     }
 
-    // filterUpdates(updates);
     if (Object.keys(updates).length) {
         return updates;
     }
 
     return null;
-}
-
-function filterUpdates(updates) {
-    if (updates && typeof updates === 'object') {
-        CONFIG.keys_to_hide_from_updates.forEach(k => delete updates[k]);
-    }
-}
-
-function prepareConsoleOutput(data, updates) {
-    filterUpdates(updates);
-    if (updates && !Object.keys(updates).length) {
-        updates = null;
-    }
-
-    let formatted_data = format('dataForConsole', data, logs_written);
-    if (updates && updates !== data) {
-        formatted_data += format('updatesForConsole', updates);
-    }
-
-    return formatted_data;
 }
