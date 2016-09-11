@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+/* eslint no-console: 0 */
+'use strict';
+
+const program = require('commander');
+const scraper = require('./scraper.js');
+const report = require('./report.js');
+const helpers = require('./helpers/helpers.js');
+const logger = require('./logger');
+
+
+program
+    .version(require('../package.json').version);
+
+program
+    .command('stalk [user_id]')
+    .description('Collect data and monitor updates for user with ID=user_id')
+    .action(user_id => {
+        scraper.work(user_id);
+    });
+
+program
+    .command('report [user_id]')
+    .description('Generate a report/summary on data collected about the user with ID=user_id')
+    .option('-t, --type [type]', 'Generate a specific report. Options: general, music.')
+    // .option('--raw-data', 'Return raw data, without formatting')
+    .action((user_id, options) => {
+        const type = options.type || 'music';
+        logger.info(`Requested ${type} report for user with ID=${user_id}`);
+        report(type, user_id)
+            .then(data => {
+                helpers.sendData(data);
+                process.exit();
+            });
+    });
+
+program
+    .command('help')
+    .description('Display information about accepted commands and options')
+    .action(() => {
+        program.help();
+        process.exit();
+    });
+
+program.parse(process.argv);
