@@ -96,18 +96,21 @@ module.exports = function(server) {
                     if (!worker) {
                         console.log('Creating new WORKER.');
                         cluster.setupMaster({
-                            exec: path.resolve(__dirname, '../vkstalk'),
+                            exec: path.resolve(__dirname, '../stalker/run'),
                             args: ['stalk', stalked_id],
                             silent: true
                         });
 
                         worker = cluster.fork();
                         workers[stalked_id] = worker.id;
-                        worker.process.stdout.on('data', buffer => {
+                        worker.on('message', msg => {
                             io.sockets.to(room).emit('stalk-data', {
                                 stalked_id: stalked_id,
-                                message: buffer.toString('utf8')
+                                message: require('util').inspect(msg)
                             });
+                        });
+                        worker.on('error', err => {
+                            throw err;
                         });
                     } else {
                         socket.emit('stalk-data', {

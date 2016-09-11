@@ -127,18 +127,23 @@ router.route('/reports/:stalked_id/:report_type?')
             return res.sendStatus(400, 'Invalid characters in report type');
         }
 
+        const timeout_id = setTimeout(() => {
+            res.sendStatus(500);
+        }, 10000);
+
         cluster.setupMaster({
-            exec: path.resolve(__dirname, '../../vkstalk'),
-            args: ['report', '--raw-data', '--type', report_type, stalked_id],
+            exec: path.resolve(__dirname, '../../stalker/run'),
+            args: ['report', '--type', report_type, stalked_id],
             silent: true
         });
 
         const worker = cluster.fork();
-        worker.on('message', data => {
+        worker.on('message', msg => {
+            clearTimeout(timeout_id);
             const view_path = `includes/reports/${report_type}.pug`;
 
-            delete data._id;
-            res.render(view_path, {data: data}, (err, html) => {
+            delete msg.data._id;
+            res.render(view_path, {data: msg.data}, (err, html) => {
                 if (err) {
                     console.error(err);
                     html = 'Error generating report';
@@ -150,5 +155,9 @@ router.route('/reports/:stalked_id/:report_type?')
                     report: html
                 });
             });
+        });
+
+        worker.on('error', err => {
+            throw err;
         });
     });
