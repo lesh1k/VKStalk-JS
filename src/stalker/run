@@ -30,7 +30,10 @@ program
         logger.info(`Requested ${type} report for user with ID=${user_id}`);
         report(type, user_id)
             .then(data => {
-                helpers.sendData(data);
+                helpers.sendData({
+                    type: `report-${type}`,
+                    data: data
+                });
                 process.exit();
             });
     });

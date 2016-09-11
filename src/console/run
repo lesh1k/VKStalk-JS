@@ -5,12 +5,10 @@
 
 const program = require('commander');
 const cluster = require('cluster');
-const path = require('path');
 
-const scraper = require('./scraper.js');
-const report = require('./report.js');
 const format = require('./format.js');
 const helpers = require('./helpers/helpers.js');
+const actions = require('./actions');
 
 
 program
@@ -19,44 +17,14 @@ program
 program
     .command('stalk [user_id]')
     .description('Collect data and monitor updates for user with ID=user_id')
-    .action(user_id => {
-        // console.log('Creating new WORKER.');
-        cluster.setupMaster({
-            exec: path.resolve(__dirname, '../stalker/run'),
-            args: ['stalk', user_id],
-            silent: true
-        });
-
-        const worker = cluster.fork();
-        worker.on('message', msg => {
-            console.log(msg);
-        });
-    });
+    .action(actions.stalk);
 
 program
     .command('report [user_id]')
     .description('Generate a report/summary on data collected about the user with ID=user_id')
     .option('-t, --type [type]', 'Generate a specific report. Options: general, music.')
-    .option('--raw-data', 'Return raw data, without formatting')
-    .action((user_id, options) => {
-        const type = options.type || 'music';
-        console.log(`\nRequested ${type} report for user with ID=${user_id}\n`);
-        report(type, user_id)
-            .then(data => {
-                if (options.rawData) {
-                    if (cluster.isWorker) {
-                        process.send(data);
-                    } else {
-                        console.log(data);
-                    }
-                } else {
-                    let formatter_type = `report${helpers.capitalize(type)}`;
-                    console.log(format(formatter_type, data));
-                }
-
-                process.exit();
-            });
-    });
+    // .option('--raw-data', 'Return raw data, without formatting')
+    .action(actions.report);
 
 program
     .command('help')

@@ -1,7 +1,10 @@
 'use strict';
 
-const logger = require('../logger.js');
 const memwatch = require('memwatch-next');
+const cluster = require('cluster');
+const path = require('path');
+
+const logger = require('../logger.js');
 
 module.exports = exports = {};
 
@@ -64,4 +67,16 @@ exports.monitorMemoryLeaks = function() {
     memwatch.on('leak', function(info) {
         logger.warn('Possible MEMORY LEAK detected', info);
     });
+};
+
+exports.spawnStalker = function(args, onMessage, onError=console.error) {
+    cluster.setupMaster({
+        exec: path.resolve(__dirname, '../../stalker/run'),
+        args: args,
+        silent: true
+    });
+
+    const worker = cluster.fork();
+    worker.on('message', onMessage);
+    worker.on('error', onError);
 };
