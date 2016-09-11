@@ -7,6 +7,7 @@ const Table = require('cli-table');
 module.exports = format;
 
 const FORMATTERS = {
+    'console': formatConsole,
     'dataForConsole': formatForConsole,
     'updatesForConsole': formatUpdates,
     'lastSeenTime': formatLastSeenTime,
@@ -25,6 +26,16 @@ function format(type) {
     console.error('No formatter for type', item.type);
 }
 
+function formatConsole(data) {
+    let result = '';
+    result += formatForConsole(data.user, data.logs_written);
+    if (data.updates) {
+        result += formatUpdates(data.updates);
+    }
+
+    return result;
+}
+
 function formatForConsole(data, logs_written=0) {
     let launch_date = helpers.getProcessLaunchDate();
     let name = data.Name.replace('  ', ' ');
@@ -32,7 +43,7 @@ function formatForConsole(data, logs_written=0) {
     result += `User name: ${name}\n`;
     result += `User ID: ${data.user_id}\n`;
     result += `Logs written: ${logs_written}\n\n`;
-    result += `>>> Checked on ${data.timestamp} <<<\n\n`;
+    result += `>>> Checked on ${new Date(data.timestamp)} <<<\n\n`;
     result += `${name} -- ${data['Last seen']}`;
     if (data.isFromMobile) {
         result += ' [Mobile]';

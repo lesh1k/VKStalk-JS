@@ -78,7 +78,8 @@ function scrape() {
 
             const data = {
                 user: user_data,
-                updates: user_updates
+                updates: user_updates,
+                logs_written: logs_written
             };
 
             logger.info('Send data if listeners available', {
