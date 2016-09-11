@@ -4,10 +4,7 @@
 'use strict';
 
 const program = require('commander');
-const cluster = require('cluster');
 
-const format = require('./format.js');
-const helpers = require('./helpers/helpers.js');
 const actions = require('./actions');
 
 
@@ -23,7 +20,6 @@ program
     .command('report [user_id]')
     .description('Generate a report/summary on data collected about the user with ID=user_id')
     .option('-t, --type [type]', 'Generate a specific report. Options: general, music.')
-    // .option('--raw-data', 'Return raw data, without formatting')
     .action(actions.report);
 
 program
@@ -35,7 +31,3 @@ program
     });
 
 program.parse(process.argv);
-
-// let missing_command_text = 'Unknown command.\nUse `vkstalk help` to see the list of available commands and options';
-// process.stdout.write(missing_command_text);
-// process.exit();

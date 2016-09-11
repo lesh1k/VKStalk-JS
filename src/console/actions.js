@@ -16,6 +16,10 @@ exports.stalk = user_id => {
             helpers.clearConsole();
             console.log(format('console', msg.data));
         }
+
+        if (msg.error) {
+            console.log(msg.error);
+        }
     };
     helpers.spawnStalker(args, onMessage);
 };
@@ -24,7 +28,8 @@ exports.report = (user_id, options) => {
     const type = options.type || 'music';
     const args = ['report', '--type', type, user_id];
     const onMessage = msg => {
-        console.log(msg);
+        const formatter_name = 'report' + helpers.capitalize(type);
+        console.log(format(formatter_name, msg.data));
         process.exit();
     };
     helpers.spawnStalker(args, onMessage);

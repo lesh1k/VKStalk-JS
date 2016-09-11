@@ -36,7 +36,7 @@ function formatConsole(data) {
     return result;
 }
 
-function formatForConsole(data, logs_written=0) {
+function formatForConsole(data, logs_written = 0) {
     let launch_date = helpers.getProcessLaunchDate();
     let name = data.Name.replace('  ', ' ');
     let result = `App launched on ${launch_date}\n`;
@@ -69,11 +69,11 @@ function formatReportMusic(docs) {
     }
 
     let table = new Table({
-        head: ['Track', 'Times played']
+        head: ['#', 'Track', 'Times played']
     });
 
-    docs.forEach(doc => {
-        table.push([doc.track, doc.play_count]);
+    docs.forEach((doc, i) => {
+        table.push([i+1, doc.track, doc.play_count]);
     });
 
     return table.toString();
