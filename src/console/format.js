@@ -10,10 +10,8 @@ const FORMATTERS = {
     'console': formatConsole,
     'dataForConsole': formatForConsole,
     'updatesForConsole': formatUpdates,
-    'lastSeenTime': formatLastSeenTime,
     'reportMusic': formatReportMusic,
-    'reportGeneral': formatReportGeneral,
-    'retryConnectionMessage': formatRetryConnectionMessage
+    'reportGeneral': formatReportGeneral
 };
 
 function format(type) {
@@ -87,26 +85,4 @@ function formatReportGeneral(doc) {
     }
 
     return result;
-}
-
-function formatLastSeenTime(last_seen) {
-    const regex = /\d{1,2}\:\d{2}\s{1}(am|pm){1}/i;
-    if (regex.test(last_seen)) {
-        let time = last_seen.match(regex)[0];
-        time = helpers.convertTimeTo24hrs(time);
-        last_seen = last_seen.replace(regex, time);
-    }
-
-    return last_seen;
-}
-
-function formatRetryConnectionMessage(retry_count, max_retry_attempts, user_id, url) {
-    let message = '';
-    message += `Attempt #${retry_count} (out of ${max_retry_attempts})\n`;
-    message += 'Cannot scrape page.';
-    message += 'Profile is either hidden, not existing or deleted\n';
-    message += `Please check that USER_ID=${user_id} and URL=${url} are correct.\n`;
-    message += 'Retry after timeout.';
-
-    return message;
 }
