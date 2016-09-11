@@ -5,6 +5,7 @@ const dailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
 
 const CONFIG = require('../config/config.json');
+const LOG_DIRECTORY = path.join(__dirname, '../../logs');
 
 
 const logger = new winston.Logger({
@@ -15,14 +16,14 @@ const logger = new winston.Logger({
             handleExceptions: true,
             humanReadableUnhandledException: true,
             exitOnError: true,
-            filename: path.join(CONFIG.log_directory, 'error.log'),
+            filename: path.join(LOG_DIRECTORY, 'error.log'),
             datePattern: '.yyyy-MM-dd',
             prepend: false
         }),
         new (dailyRotateFile)({
             name: 'vkstalk-daily',
             level: CONFIG.log_level || 'warn',
-            filename: path.join(CONFIG.log_directory, 'vkstalk.log'),
+            filename: path.join(LOG_DIRECTORY, 'vkstalk.log'),
             datePattern: '.yyyy-MM-dd',
             prepend: false
         })
