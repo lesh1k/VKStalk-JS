@@ -5,20 +5,32 @@
 
 const program = require('commander');
 const cluster = require('cluster');
-const scraper = require('./stalker/scraper.js');
-const report = require('./stalker/report.js');
-const format = require('./stalker/format.js');
-const helpers = require('./stalker/helpers/helpers.js');
+const path = require('path');
+
+const scraper = require('./scraper.js');
+const report = require('./report.js');
+const format = require('./format.js');
+const helpers = require('./helpers/helpers.js');
 
 
 program
-    .version('1.0.0-alpha.6');
+    .version(require('../package.json').version);
 
 program
     .command('stalk [user_id]')
     .description('Collect data and monitor updates for user with ID=user_id')
     .action(user_id => {
-        scraper.work(user_id);
+        // console.log('Creating new WORKER.');
+        cluster.setupMaster({
+            exec: path.resolve(__dirname, '../stalker/run'),
+            args: ['stalk', user_id],
+            silent: true
+        });
+
+        const worker = cluster.fork();
+        worker.on('message', msg => {
+            console.log(msg);
+        });
     });
 
 program
