@@ -4,6 +4,7 @@ const cluster = require('cluster');
 const path = require('path');
 const StalkedId = require('./models/stalked_id');
 const User = require('./models/user');
+const format = require('./format')
 
 
 module.exports = function(server) {
@@ -106,7 +107,7 @@ module.exports = function(server) {
                         worker.on('message', msg => {
                             io.sockets.to(room).emit('stalk-data', {
                                 stalked_id: stalked_id,
-                                message: require('util').inspect(msg)
+                                message: format('web', msg)
                             });
                         });
                         worker.on('error', err => {
