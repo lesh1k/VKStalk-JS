@@ -2,7 +2,6 @@
 
 const co = require('co');
 const cheerio = require('cheerio');
-const path = require('path');
 
 const ph = require('./helpers/phantom.js');
 const db = require('./db.js');
@@ -88,7 +87,7 @@ function scrape() {
             });
 
             helpers.sendData({
-                type: 'user-data-and-updates',
+                type: 'stalk-data',
                 data: data
             });
         })
@@ -110,7 +109,6 @@ function scrape() {
                 const message = format('retryConnectionMessage', retry_count, CONFIG.max_retry_attempts, USER_ID, URL, timeout);
                 logger.warn(message);
                 helpers.sendData({
-                    type: 'error',
                     error: message
                 });
 
@@ -127,7 +125,6 @@ function scrape() {
             });
 
             helpers.sendData({
-                type: 'error',
                 error: '[CRITICAL ERROR] The process will terminate now. For more info see the logs'
             });
             setTimeout(() => {
@@ -146,7 +143,6 @@ function* getPageContent(url) {
 
     logger.info('Fetching data...');
     helpers.sendData({
-        type: 'message',
         data: 'Fetching data...'
     });
     const html = yield* ph.fetchPageContent(url, instance, false);
