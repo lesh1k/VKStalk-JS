@@ -5,7 +5,6 @@ const router = express.Router();
 const passport = require('passport');
 const cluster = require('cluster');
 const path = require('path');
-const fs = require('fs');
 
 const User = require('../models/user');
 const helpers = require('../helpers');
