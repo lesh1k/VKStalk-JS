@@ -74,8 +74,8 @@ exports.monitorMemoryLeaks = function() {
 
 exports.sendData = function(message, fallback_to_console = false) {
     const message_sample = {
-        type: 'string', // message, stalk-data, data
-        data: 'Sample message', // either a string or an object
+        type: null, // message, stalk-data, data
+        data: null, // either a string or an object
         error: null
     };
 
