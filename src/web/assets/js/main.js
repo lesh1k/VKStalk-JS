@@ -4,29 +4,7 @@
 (function() {
     'use strict';
 
-    $.fn.extend({
-        serializeObject: function() {
-            var form = this[0];
-            var data = $(form).serializeArray();
-            var obj = {};
-            $.each(data, function(k, v) {
-                obj[v.name] = v.value;
-            });
-            return obj;
-        },
-    });
-
     $(function() {
-        $('.button-collapse').sideNav({
-            edge: 'right'
-        });
-
-        $('.dropdown-button').dropdown({
-            hover: true
-        });
-
-        $('.collapsible').collapsible();
-
         $(document).on('cardHeightUpdate', '.card', function(e, data) {
             var $card_data = $(this).find('.stalk-data');
             var min_height = parseInt($card_data.css('min-height'), 10);

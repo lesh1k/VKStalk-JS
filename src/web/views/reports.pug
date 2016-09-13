@@ -4,6 +4,23 @@ block content
     h4 Reports on #{stalked_id}
     if (report_type)
         h5 Requested report type: #{report_type}
+    else
+
+        form(action="", method="GET", role="form")
+            .row
+                .input-field.col.s12
+                    select#report-type
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='general') General
+                        option(value='music') Music
+                    label Report type
+            .row
+                .col.s12
+                    button.btn Submit
+
 
     section#report
         != report
+
+block scripts
+    script(src="/assets/js/reports.js")
