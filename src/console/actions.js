@@ -10,15 +10,9 @@ exports.stalk = user_id => {
     // console.log('Creating new WORKER.');
     const args = ['stalk', user_id];
     const onMessage = msg => {
-        if (msg.type === 'message') {
-            console.log(msg.data);
-        } else if (msg.type === 'user-data-and-updates') {
+        if (msg.type === 'stalk-data') {
             helpers.clearConsole();
             console.log(format('console', msg.data));
-        }
-
-        if (msg.error) {
-            console.log(msg.error);
         }
     };
     helpers.spawnStalker(args, onMessage);
