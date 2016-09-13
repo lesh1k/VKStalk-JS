@@ -126,6 +126,12 @@ router.route('/reports/:stalked_id/:report_type?')
             return res.sendStatus(400, 'Invalid characters in report type');
         }
 
+        if (!report_type) {
+            return res.render('reports', {
+                stalked_id: req.params.stalked_id
+            });
+        }
+
         const timeout_id = setTimeout(() => {
             res.sendStatus(500);
         }, 10000);
