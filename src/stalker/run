@@ -31,7 +31,8 @@ program
         report(type, user_id)
             .then(data => {
                 helpers.sendData({
-                    type: `report-${type}`,
+                    type: 'report',
+                    report_type: type,
                     data: data
                 });
                 process.exit();

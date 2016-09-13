@@ -74,8 +74,9 @@ exports.monitorMemoryLeaks = function() {
 
 exports.sendData = function(message, fallback_to_console = false) {
     const message_sample = {
-        type: null, // message, stalk-data, data
-        data: null, // either a string or an object
+        type: null,
+        data: null,
+        report_type: null,
         error: null
     };
 
@@ -109,7 +110,7 @@ exports.sendData = function(message, fallback_to_console = false) {
 
 function isValidMessage(message) {
     const log_prefix = 'isValidMessage(message).';
-    const MESSAGE_TYPES = ['object', 'stalk-data'];
+    const MESSAGE_TYPES = ['object', 'stalk-data', 'report'];
 
     if (typeof message.data === 'string' || message.error) {
         return true;
@@ -128,6 +129,15 @@ function isValidMessage(message) {
         logger.error(
             `${log_prefix} Unexpected message.data for message.type="${message.type}"` +
             `Expected message.data to be 'object', but it is '${typeof message.data}'`, {
+                message: message
+            }
+        );
+        return false;
+    }
+
+    if (message.type === 'report' && typeof message.report_type !== 'string') {
+        logger.error(
+            `${log_prefix} Missing or invalid message.report_type="${message.report_type}" for message.type="${message.type}"`, {
                 message: message
             }
         );
