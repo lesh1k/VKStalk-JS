@@ -123,7 +123,11 @@ router.route('/reports/:stalked_id/:report_type?')
         const stalked_id = req.params.stalked_id;
         const report_type = req.params.report_type;
         if (!helpers.isValidId(report_type)) {
-            return res.sendStatus(400, 'Invalid characters in report type');
+            return res.status(400).send('Invalid characters in report type');
+        }
+
+        if (req.user.stalked_ids.indexOf(stalked_id) === -1) {
+            return res.status(403).send('Cannot view reports for non-tracked users');
         }
 
         if (!report_type) {
