@@ -13,11 +13,11 @@ const FORMATTERS = {
 
 function format(type) {
     const msg = arguments[1];
-    if (msg.type === 'error') {
+    if (msg.error) {
         return msg.error;
     }
 
-    if (msg.type === 'message') {
+    if (typeof msg.data === 'string') {
         return msg.data;
     }
 
@@ -43,7 +43,6 @@ function formatWeb(data) {
 }
 
 function formatUserData(data, logs_written = 0) {
-    console.log(data);
     // let launch_date = helpers.getProcessLaunchDate();
     let name = data.Name.replace('  ', ' ');
     // let result = `App launched on ${launch_date}\n`;

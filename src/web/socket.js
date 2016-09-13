@@ -4,7 +4,7 @@ const cluster = require('cluster');
 const path = require('path');
 const StalkedId = require('./models/stalked_id');
 const User = require('./models/user');
-const format = require('./format')
+const format = require('./format');
 
 
 module.exports = function(server) {
