@@ -54,7 +54,9 @@
 
         socket.on('stalk-remove', function(data) {
             if (!data.error) {
-                $(document.getElementById(data.stalked_id)).parent().remove();
+                $(document.getElementById(data.stalked_id)).parent().fadeOut(function() {
+                    $(this).remove();
+                });
             } else {
                 $(document.getElementById(data.stalked_id)).find('.stalk-data').text(data.error);
             }
