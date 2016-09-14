@@ -68,7 +68,6 @@ function reportMusic(user_id, params = {}) {
     }
 
     return co(function*() {
-
             const docs = yield collection.aggregate([{
                 $match: match_query
             }, {
@@ -78,17 +77,22 @@ function reportMusic(user_id, params = {}) {
                     },
                     play_count: {
                         $sum: 1
+                    },
+                    last_played: {
+                        $last: '$timestamp'
                     }
                 }
             }, {
                 $project: {
                     _id: 0,
                     track: '$_id.track',
-                    play_count: 1
+                    play_count: 1,
+                    last_played: 1
                 }
             }, {
                 $sort: {
-                    play_count: -1
+                    play_count: -1,
+                    last_played: -1
                 }
             }]);
 
