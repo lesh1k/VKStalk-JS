@@ -3,9 +3,11 @@ table.responsive-table.highlight
         tr
             th Track
             th Play count
+            th Last played
 
     tbody
         each entry in data
             tr
                 td= entry.track
                 td= entry.play_count
+                td= new Date(entry.last_played)

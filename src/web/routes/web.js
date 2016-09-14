@@ -142,7 +142,7 @@ router.route('/reports/:stalked_id/:report_type?')
 
         cluster.setupMaster({
             exec: path.resolve(__dirname, '../../stalker/run'),
-            args: ['report', '--type', report_type, stalked_id],
+            args: ['report', stalked_id, '--type', report_type],
             silent: true
         });
 
