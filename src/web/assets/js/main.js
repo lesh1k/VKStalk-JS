@@ -1,5 +1,5 @@
 /* eslint-env jquery */
-/* global io */
+/* global io Materialize */
 
 (function() {
     'use strict';
@@ -47,7 +47,9 @@
 
         socket.on('disconnect', function() {
             $('.stalk-data').text('Disconnected...');
-            $('.card').trigger('cardHeightUpdate', {reset: true});
+            $('.card').trigger('cardHeightUpdate', {
+                reset: true
+            });
         });
 
         socket.on('stalk-remove', function(data) {
@@ -77,7 +79,7 @@
                 })
                 .done(function(response) {
                     if (response.error) {
-                        console.error(response.error);
+                        Materialize.toast(response.error, 5000);
                         return;
                     }
 
@@ -112,7 +114,9 @@
                 var $card = $(this).closest('.card');
                 var stalked_id = $card.attr('id');
                 socket.emit('stalk-stop', stalked_id);
-                $card.trigger('cardHeightUpdate', {reset: true});
+                $card.trigger('cardHeightUpdate', {
+                    reset: true
+                });
                 $card.find('.stalk-start, .stalk-stop').toggleClass('hide');
             });
         }
