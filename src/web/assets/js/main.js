@@ -89,7 +89,10 @@
                     socket.emit('stalk-join', response.stalked_id);
                 })
                 .fail(function(response) {
-                    console.error(response);
+                    var msg = response.status + ' ';
+                    msg += response.statusText;
+                    msg += '<br>' + response.responseText;
+                    Materialize.toast(msg, 5000);
                 });
         });
     }
