@@ -14,11 +14,30 @@ block content
                         option(value='general') General
                         option(value='music') Music
                     label Report type
+
+            .row
+                .input-field.col.s6
+                    input.datepicker(type='date', name='date-from')
+                    label Date from
+                .input-field.col.s6
+                    label(for='time-from') Time from
+                    input#time-from.timepicker(type='time', name='time-from')
+
+            .row
+                .input-field.col.s6
+                    input.datepicker(type='date', name='date-to')
+                    label Date to
+                .input-field.col.s6
+                    label(for='time-to') Time to
+                    input#time-to.timepicker(type='time', name='time-to')
+
+            .row
                 button.btn.col.s12 Submit
 
 
     section#report
         != report
+
 
 block scripts
     script(src="/assets/js/reports.js")
