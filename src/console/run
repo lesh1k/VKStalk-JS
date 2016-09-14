@@ -4,7 +4,6 @@
 'use strict';
 
 const program = require('commander');
-const helpers = require('./helpers/helpers');
 const actions = require('./actions');
 
 
@@ -21,7 +20,7 @@ program
     .command('report <user_id>')
     .description('Generate a report/summary on collected data about the user with ID=user_id')
     .option('-t, --type <type>', 'Report type', /^(general|music|updates)$/, 'music')
-    .option('--period <[from]..[to]>', 'Datetime range from..to. Datetime format: yyyy.mm.dd HH:MM:ss:ms', helpers.datetimeRange)
+    .option('--period <[from]..[to]>', 'Datetime range from..to. Datetime format: yyyy.mm.dd HH:MM:ss:ms')
     // .option('--raw-data', 'Return raw data, without formatting')
     .action(actions.report);
 

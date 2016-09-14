@@ -67,11 +67,11 @@ function formatReportMusic(docs) {
     }
 
     let table = new Table({
-        head: ['#', 'Track', 'Times played']
+        head: ['#', 'Track', 'Times played', 'Last played']
     });
 
     docs.forEach((doc, i) => {
-        table.push([i+1, doc.track, doc.play_count]);
+        table.push([i + 1, doc.track, doc.play_count, new Date(doc.last_played).toString()]);
     });
 
     return table.toString();

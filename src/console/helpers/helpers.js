@@ -65,34 +65,3 @@ function onMessageThunkify(fn) {
         return fn(msg);
     };
 }
-
-exports.datetimeRange = function(val) {
-    logger.debug(`Parsing datetime range: ${val}`);
-
-    if (val.indexOf('..') === -1) {
-        logger.debug(`No ".." separator found. Considering it to be "from", appending "..". Input: ${val}`);
-        val += '..';
-    }
-    const dates = val.split('..').map(part => new Date(part));
-    const range = {};
-
-    if (!Number.isNaN(dates[0].getTime())) {
-        range.from = new Date(dates[0]);
-    }
-
-    if (!Number.isNaN(dates[1].getTime())) {
-        range.to = new Date(dates[1]);
-    } else {
-        range.to = new Date();
-    }
-
-    if (!Object.keys(range).length) {
-        const err_msg = `Invalid range format. Expected [from]..[to], got ${val}`;
-        logger.error(err_msg);
-        return Error(err_msg);
-    }
-
-    console.log(range);
-
-    return range;
-};

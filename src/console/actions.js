@@ -20,7 +20,10 @@ exports.stalk = user_id => {
 
 exports.report = (user_id, options) => {
     const type = options.type || 'music';
-    const args = ['report', '--type', type, user_id];
+    let args = ['report', user_id, '--type', type];
+    if (options.period) {
+        args = args.concat(['--period', options.period]);
+    }
     const onMessage = msg => {
         const formatter_name = 'report' + helpers.capitalize(type);
         console.log(format(formatter_name, msg.data));
