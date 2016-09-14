@@ -1,0 +1,12 @@
+include ./navbar_links.pug
+
+header
+    nav
+        .nav-wrapper
+            a.brand-logo.center(href='/') vkstalk
+            a.button-collapse.right(href='#', data-activates='mobile-nav')
+                i.material-icons menu
+            ul.right.hide-on-med-and-down
+                +navbarLinks()
+            ul#mobile-nav.side-nav
+                +navbarLinks('mobile')
