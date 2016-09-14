@@ -4,10 +4,8 @@
 'use strict';
 
 const program = require('commander');
-const scraper = require('./scraper.js');
-const report = require('./report.js');
-const helpers = require('./helpers/helpers.js');
-const logger = require('./logger');
+const helpers = require('./helpers/helpers');
+const actions = require('./actions');
 
 
 program
@@ -17,9 +15,7 @@ program
 program
     .command('stalk <user_id>')
     .description('Collect data and monitor updates for user with ID=user_id')
-    .action(user_id => {
-        scraper.work(user_id);
-    });
+    .action(actions.stalk);
 
 program
     .command('report <user_id>')
@@ -27,22 +23,7 @@ program
     .option('-t, --type <type>', 'Report type', /^(general|music|updates)$/, 'music')
     .option('--period <[from]..[to]>', 'Datetime range from..to. Datetime format: yyyy.mm.dd HH:MM:ss:ms', helpers.datetimeRange)
     // .option('--raw-data', 'Return raw data, without formatting')
-    .action((user_id, options) => {
-        const type = options.type;
-        const params = {
-            period: options.period
-        };
-        logger.info(`Requested ${type} report for user with ID=${user_id}.`, {params: params});
-        report(type, user_id, params)
-            .then(data => {
-                helpers.sendData({
-                    type: 'report',
-                    report_type: type,
-                    data: data
-                });
-                process.exit();
-            });
-    });
+    .action(actions.report);
 
 program
     .command('help')
