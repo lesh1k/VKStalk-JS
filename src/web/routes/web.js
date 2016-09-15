@@ -114,11 +114,28 @@ router.route('/logout')
 router.route('/reports/:stalked_id/:report_type?')
     .get((req, res, next) => {
         if (!helpers.isValidId(req.params.stalked_id)) {
-            return res.sendStatus(400);
+            return res.status(400).send('Invalid ID');
+        }
+
+        if (req.params.report_type && !helpers.isValidId(req.params.report_type)) {
+            return res.status(400).send('Invalid report type');
+        }
+
+        if (req.user.stalked_ids.indexOf(req.params.stalked_id) === -1) {
+            return res.status(403).send('Cannot view reports for non-tracked users');
         }
 
         next();
-    })
+    });
+
+router.route('/reports/:stalked_id')
+    .get((req, res) => {
+        return res.render('reports', {
+            stalked_id: req.params.stalked_id
+        });
+    });
+
+router.route('/reports/:stalked_id/:report_type')
     .get((req, res) => {
         const stalked_id = req.params.stalked_id;
         const report_type = req.params.report_type;
@@ -126,28 +143,11 @@ router.route('/reports/:stalked_id/:report_type?')
             return res.status(400).send('Invalid characters in report type');
         }
 
-        if (req.user.stalked_ids.indexOf(stalked_id) === -1) {
-            return res.status(403).send('Cannot view reports for non-tracked users');
-        }
-
-        if (!report_type) {
-            return res.render('reports', {
-                stalked_id: req.params.stalked_id
-            });
-        }
-
         const timeout_id = setTimeout(() => {
-            res.sendStatus(500);
-        }, 10000);
+            res.status(500).send('Something went wrong. Please try again.');
+        }, 100000);
 
-        cluster.setupMaster({
-            exec: path.resolve(__dirname, '../../stalker/run'),
-            args: ['report', stalked_id, '--type', report_type],
-            silent: true
-        });
-
-        const worker = cluster.fork();
-        worker.on('message', msg => {
+        const onMessage = msg => {
             clearTimeout(timeout_id);
             const view_path = `includes/reports/${report_type}.pug`;
 
@@ -155,18 +155,65 @@ router.route('/reports/:stalked_id/:report_type?')
             res.render(view_path, {data: msg.data}, (err, html) => {
                 if (err) {
                     console.error(err);
-                    html = 'Error generating report';
+                    return res.status(500, 'Error generating report');
                 }
 
-                res.render('reports', {
+                res.json({
+                    error: null,
                     stalked_id: req.params.stalked_id,
                     report_type: report_type,
                     report: html
                 });
             });
-        });
+        };
 
-        worker.on('error', err => {
-            throw err;
-        });
+        const query_args = parseReportQueryToStalkerArgs(req.query);
+        if (query_args.error) {
+            clearTimeout(timeout_id);
+            return res.status(400).send(query_args.error);
+        }
+
+        const args = ['report', stalked_id].concat(query_args.args);
+        helpers.spawnStalker(args, onMessage);
+
     });
+
+function parseReportQueryToStalkerArgs(q) {
+    const result = {
+        error: null,
+        args: []
+    };
+
+    for (let k in q) {
+        if (!helpers.isSanitized(q[k])) {
+            result.error = 'Bad parameters';
+            return result;
+        }
+    }
+
+    const args = ['--type', q['report-type']];
+    const dt_from = [q['date-from'], q['time-from']].join(' ').trim();
+    const dt_to = [q['date-to'], q['time-to']].join(' ').trim();
+
+    if (dt_from && dt_to) {
+        var d1 = new Date(dt_from).getTime();
+        var d2 = new Date(dt_to).getTime();
+        if (d2 < d1) {
+            result.error = '"Time to" must be bigger than "Time from"';
+            return result;
+        }
+    }
+
+    let period = '';
+    if (dt_from || dt_to) {
+        period = [dt_from, dt_to].join('..').trim();
+    }
+
+    if (period) {
+        args.push('--period');
+        args.push(period);
+    }
+
+    result.args = args;
+    return result;
+}

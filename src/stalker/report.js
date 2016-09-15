@@ -51,11 +51,11 @@ function reportMusic(user_id, params = {}) {
 
     const timestamp_query = {};
     if (params.period && params.period.from) {
-        timestamp_query.$gt = params.period.from;
+        timestamp_query.$gte = params.period.from;
     }
 
     if (params.period && params.period.to) {
-        timestamp_query.$lt = params.period.to;
+        timestamp_query.$lte = params.period.to;
     }
 
     const match_query = {

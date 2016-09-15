@@ -2,22 +2,19 @@ extends ./layout
 
 block content
     h4 Reports on #{stalked_id}
-    if (report_type)
-        h5 Requested report type: #{report_type}
-    else
 
-        form(action="", method="GET", role="form")
+    section
+        form#report-form(action="/music", method="GET", role="form", disabled)
             .row
                 .input-field.col.s12
-                    select#report-type
-                        option(value='', disabled='', selected='') Choose your option
+                    select#report-type(name='report-type')
                         option(value='general') General
-                        option(value='music') Music
+                        option(value='music', selected) Music
                     label Report type
 
             .row
                 .input-field.col.s6
-                    input.datepicker(type='date', name='date-from')
+                    input#date-from.datepicker(type='date', name='date-from')
                     label Date from
                 .input-field.col.s6
                     label(for='time-from') Time from
@@ -25,14 +22,14 @@ block content
 
             .row
                 .input-field.col.s6
-                    input.datepicker(type='date', name='date-to')
+                    input#date-to.datepicker(type='date', name='date-to')
                     label Date to
                 .input-field.col.s6
                     label(for='time-to') Time to
                     input#time-to.timepicker(type='time', name='time-to')
 
             .row
-                button.btn.col.s12 Submit
+                button.btn.col.s12.waves-effect Submit
 
 
     section#report

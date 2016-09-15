@@ -10,6 +10,4 @@ table.responsive-table.highlight
             tr
                 td= entry.track
                 td= entry.play_count
-                td
-                    script.
-                        document.write(new Date('#{entry.last_played}'))
+                td= entry.last_played
