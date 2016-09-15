@@ -174,11 +174,13 @@ router.route('/reports/:stalked_id/:report_type')
         }
 
         const args = ['report', stalked_id].concat(query_args.args);
+        // console.log(args);
         helpers.spawnStalker(args, onMessage);
 
     });
 
 function parseReportQueryToStalkerArgs(q) {
+    // console.log(q);
     const result = {
         error: null,
         args: []
