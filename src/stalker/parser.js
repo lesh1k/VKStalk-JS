@@ -58,7 +58,7 @@ function parseDetailedProfileInformation($) {
     let data = {};
     $('.profile_info_short, .profile_info_full .profile_info_block').each((i, el) => {
         $(el).find('.profile_info_row').each((i, el) => {
-            let title = $(el).find('.label').text();
+            let title = $(el).find('.label').text().replace('.', ' ').replace(':', '');
             let content = $(el).find('.labeled').text();
             if (data[title] && data[title] !== content) {
                 logger.warn(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`, {user_id: data.user_id});
@@ -73,7 +73,7 @@ function parseDetailedProfileInformation($) {
 function parseCounters($) {
     let data = {};
     $('.counts_module .page_counter').each((i, el) => {
-        let title = $(el).find('.label').text();
+        let title = $(el).find('.label').text().replace('.', ' ').replace(':', '');
         let content = $(el).find('.count').text();
         if (data[title] && data[title] !== content) {
             logger.warn(`Conflicting data title <${title}>.\nExisting: ${data[title]}\nNew: ${content}`, {user_id: data.user_id});
