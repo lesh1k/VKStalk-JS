@@ -53,6 +53,10 @@ function formatForConsole(data, logs_written = 0) {
 }
 
 function formatUpdates(updates) {
+    if (typeof updates !== 'object') {
+        return '';
+    }
+
     let result = '\nUPDATES\n';
     for (let k in updates) {
         result += `${k}: ${updates[k].current}\n`;

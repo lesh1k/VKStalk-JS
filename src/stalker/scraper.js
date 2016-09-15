@@ -77,7 +77,7 @@ function scrape() {
                 logs_written++;
 
 
-                if (entry) {
+                if (typeof user_updates === 'object' && entry) {
                     const doc = {
                         user_id: USER_ID,
                         updates: user_updates,
@@ -209,7 +209,7 @@ function* checkUserDataForUpdates(data) {
     if (!entry) {
         logger.debug('No entries for this user.');
         // No entries for this USER_ID yet
-        return null;
+        return 'First DB entry for user. Congrats!';
     }
 
     const last_document = yield* db_helpers.getLastUserDocument(collection, USER_ID);
