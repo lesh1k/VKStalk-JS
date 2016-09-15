@@ -13,6 +13,7 @@ const logger = require('./logger.js');
 
 const CONFIG = require('../config/config.json');
 const collection = db.get('data');
+const collection_updates = db.get('data_updates');
 let USER_ID = null;
 let logs_written = 0;
 let retry_count = 0;
@@ -69,10 +70,24 @@ function scrape() {
             if (user_updates) {
                 logger.info('Write user data to DB', {
                     user_id: USER_ID,
-                    updates: user_updates
+                    data: user_data
                 });
+                const entry = yield collection.findOne({user_id: USER_ID});
                 yield collection.insert(user_data);
                 logs_written++;
+
+
+                if (entry) {
+                    const doc = {
+                        user_id: USER_ID,
+                        updates: user_updates,
+                        timestamp: user_data.timestamp
+                    };
+                    logger.info('Write user updates to DB', {
+                        doc: doc
+                    });
+                    yield collection_updates.insert(doc);
+                }
             }
 
             const data = {
@@ -187,13 +202,14 @@ function collectUserData($) {
 }
 
 function* checkUserDataForUpdates(data) {
-    let count = yield collection.count({
+    let entry = yield collection.findOne({
         user_id: USER_ID
     });
 
-    if (!count) {
+    if (!entry) {
+        logger.debug('No entries for this user.');
         // No entries for this USER_ID yet
-        return data;
+        return null;
     }
 
     const last_document = yield* db_helpers.getLastUserDocument(collection, USER_ID);

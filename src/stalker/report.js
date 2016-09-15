@@ -5,11 +5,13 @@ const co = require('co');
 const logger = require('./logger.js');
 const db = require('./db.js');
 const collection = db.get('data');
+const collection_updates = db.get('data_updates');
 const db_helpers = require('./helpers/db_helpers.js');
 
 const REPORTERS = {
     'general': reportGeneral,
-    'music': reportMusic
+    'music': reportMusic,
+    'updates': reportUpdates
 };
 
 module.exports = function generateReport(type) {
@@ -96,6 +98,54 @@ function reportMusic(user_id, params = {}) {
                 }
             }]);
 
+            return docs;
+        })
+        .catch(err => {
+            logger.error('Could not generate report.', err);
+            setTimeout(() => {
+                throw err;
+            }, 2000);
+        });
+}
+
+function reportUpdates(user_id, params = {}) {
+    logger.debug('Call reportUpdates()', {
+        args: [].slice.call(arguments),
+        user_id: user_id
+    });
+
+    const timestamp_query = {};
+    if (params.period && params.period.from) {
+        timestamp_query.$gte = params.period.from;
+    }
+
+    if (params.period && params.period.to) {
+        timestamp_query.$lte = params.period.to;
+    }
+
+    const query = {
+        user_id: user_id
+    };
+
+    if (Object.keys(timestamp_query).length) {
+        query.timestamp = timestamp_query;
+    }
+
+    return co(function*() {
+            const docs = yield collection_updates.aggregate([{
+                $match: query
+            }, {
+                $project: {
+                    _id: 0,
+                    user_id: 1,
+                    updates: 1,
+                    timestamp: 1
+                }
+            }, {
+                $sort: {
+                    timestamp: -1
+                }
+            }]);
             return docs;
         })
         .catch(err => {
