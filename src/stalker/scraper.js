@@ -19,6 +19,7 @@ let logs_written = 0;
 let retry_count = 0;
 let URL;
 let instance;
+let instance_respawn;
 
 module.exports = exports = {};
 
@@ -149,11 +150,24 @@ function scrape() {
 }
 
 function* getPageContent(url) {
-    if (!instance) {
+    if (!instance || new Date().getTime() > instance_respawn) {
+        if (instance_respawn) {
+            logger.info('Exiting phantom instance before respawn', {
+                user_id: USER_ID
+            });
+            instance.exit();
+        }
+
         logger.debug('Yield new phantom instance', {
             user_id: USER_ID
         });
         instance = yield* ph.initPhantomInstance();
+
+        instance_respawn = new Date().getTime() + CONFIG.phantom_respawn_interval;
+        logger.debug(`Set respawn phantom time to ${new Date(instance_respawn)}`, {
+            user_id: USER_ID,
+            respawn: new Date(instance_respawn)
+        });
     }
 
     logger.info('Fetching data...');

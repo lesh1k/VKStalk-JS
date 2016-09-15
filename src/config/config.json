@@ -4,6 +4,7 @@
     "max_retry_attempts": 100,
     "log_level": "debug",
     "log_directory": "../../logs",
+    "phantom_respawn_interval": 3600000,
     "parse_map": [
         {
             "name": "Name",
