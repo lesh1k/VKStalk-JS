@@ -27,9 +27,9 @@
 
         $form.submit(function(e) {
             e.preventDefault();
-            $form.find('select, input, button').prop('disabled', true);
 
             var data = $form.serializeObject();
+            $form.find('select, input, button').prop('disabled', true);
 
             $.ajax({
                     url: $form.attr('action'),
@@ -52,6 +52,7 @@
                         response.report = $html;
                     }
                     $('#report').html(response.report);
+                    animatedScrollTop('#report', 300);
                 })
                 .fail(function(response) {
                     var msg = response.status + ' ';
@@ -88,6 +89,17 @@
 
             d_to.set('min', min);
         });
+    }
+
+    function animatedScrollTop(target, duration) {
+        var $target = $(target);
+
+        if (!$target.length || typeof duration !== 'number') {
+            return;
+        }
+
+        var offset_top = $target.offset().top;
+        $('html, body').stop(true).animate({scrollTop: offset_top}, duration);
     }
 
 })();
