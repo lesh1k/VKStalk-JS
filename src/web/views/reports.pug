@@ -4,16 +4,16 @@ block content
     h4 Reports on #{stalked_id}
 
     section
-        form#report-form(action="/music", method="GET", role="form", disabled)
+        form#report-form(action="#", method="GET", role="form", disabled)
             .row
                 .input-field.col.s12
                     select#report-type(name='report-type')
-                        option(value='music', selected) Music
-                        option(value='general') General
+                        option(value='general', selected) General
+                        option(value='music') Music
                         option(value='updates') Updates
                     label Report type
 
-            .row
+            .row.display-none
                 .input-field.col.s6
                     input#date-from.datepicker(type='date', name='date-from')
                     label Date from
@@ -21,7 +21,7 @@ block content
                     label(for='time-from') Time from
                     input#time-from.timepicker(type='time', name='time-from')
 
-            .row
+            .row.display-none
                 .input-field.col.s6
                     input#date-to.datepicker(type='date', name='date-to')
                     label Date to

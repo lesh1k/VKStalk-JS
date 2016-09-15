@@ -1,0 +1,31 @@
+.row
+    if data['Current city']
+        .col.s12.l4.report-icon-container(title='Current city')
+            i.vertical-align-middle.material-icons.small location_city
+            | &nbsp;
+            span.vertical-align-middle= data['Current city']
+    if data['Birthday']
+        .col.s12.l4.report-icon-container(title='Birthday')
+            i.vertical-align-middle.material-icons.small cake
+            | &nbsp;
+            span.vertical-align-middle= data['Birthday']
+    if data['Website']
+        .col.s12.l4.report-icon-container(title='Website')
+            i.vertical-align-middle.material-icons.small link
+            | &nbsp;
+            a.vertical-align-middle(href=data['Website'])= data['Website']
+    if data['photos']
+        .col.s12.l4.report-icon-container(title='Photos')
+            i.vertical-align-middle.material-icons.small photo_camera
+            | &nbsp;
+            span.vertical-align-middle= data['photos']
+    if data['Noteworthy pages']
+        .col.s12.l4.report-icon-container(title='Noteworthy pages')
+            i.vertical-align-middle.material-icons.small bookmark_border
+            | &nbsp;
+            span.vertical-align-middle= data['Noteworthy pages']
+    if data['Wallposts count (all)']
+        .col.s12.l4.report-icon-container(title='Wallposts')
+            i.vertical-align-middle.material-icons.small description
+            | &nbsp;
+            span.vertical-align-middle= data['Wallposts count (all)']

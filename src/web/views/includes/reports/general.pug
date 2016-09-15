@@ -19,6 +19,7 @@
                             if data.isListeningToMusic
                                 i.material-icons audiotrack
                             = data['Current status']
+                    include ./general_report_secondary_info
 
         .card.hide-on-med-and-up
             .card-image
@@ -38,6 +39,8 @@
                     if data.isListeningToMusic
                         i.material-icons audiotrack
                     = data['Current status']
+
+                include ./general_report_secondary_info
 
         ul.collapsible.collapsible-report-general(data-collapsible='expandable')
             li
