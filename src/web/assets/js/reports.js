@@ -20,6 +20,12 @@
         var url = window.location.pathname.replace(/\/$/, '') + '/' + $select.val();
 
         $select.closest('form').attr('action', url);
+
+        if ($select.val() === 'general') {
+            $select.closest('form').find('.row').not(':first, :last').stop().slideUp();
+        } else {
+            $select.closest('form').find('.row').not(':first, :last').stop().slideDown();
+        }
     }
 
     function setupReportAjaxRequest() {
