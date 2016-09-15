@@ -16,19 +16,23 @@
     });
 
     $(function() {
-        $('.button-collapse').sideNav({
+        initMaterializeComponents('body');
+    });
+
+    function initMaterializeComponents(container) {
+        $(container + ' .button-collapse').sideNav({
             edge: 'right'
         });
 
-        $('.dropdown-button').dropdown({
+        $(container + ' .dropdown-button').dropdown({
             hover: true
         });
 
-        $('select').material_select();
+        $(container + ' select').material_select();
 
-        $('.collapsible').collapsible();
+        $(container + ' .collapsible').collapsible();
 
-        $('.datepicker').pickadate({
+        $(container + ' .datepicker').pickadate({
             selectMonths: true, // Creates a dropdown to control month
             selectYears: 15, // Creates a dropdown of 15 years to control year
             formatSubmit: 'yyyy.mm.dd',
@@ -38,9 +42,13 @@
             closeOnClear: false
         });
 
-        $('.timepicker').pickatime({
+        $(container + ' .timepicker').pickatime({
             autoclose: true,
             twelvehour: false
         });
-    });
+    }
+
+    window.commonjs = {
+        initMaterializeComponents: initMaterializeComponents
+    };
 })();

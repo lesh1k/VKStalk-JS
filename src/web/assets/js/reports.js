@@ -52,6 +52,7 @@
                     response.report = $html;
 
                     $('#report').html(response.report);
+                    window.commonjs.initMaterializeComponents('#report');
                     animatedScrollTop('#report', 300);
                 })
                 .fail(function(response) {

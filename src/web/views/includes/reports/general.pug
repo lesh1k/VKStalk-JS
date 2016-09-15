@@ -1,6 +1,6 @@
 .row
     .col.s12
-        .card.horizontal
+        .card.horizontal.hide-on-small-only
             .card-image
                 img(src=data['Profile photo'])
             .card-stacked
@@ -9,10 +9,10 @@
                         small.right &nbsp;
                             if data.isOnline
                                 | online&nbsp;
-                                if data.isFromMobile
-                                    i.material-icons stay_primary_portrait
                             else
                                 = data['Last seen']
+                            if data.isFromMobile
+                                i.material-icons stay_primary_portrait
 
                         br
                         small
@@ -20,15 +20,34 @@
                                 i.material-icons audiotrack
                             = data['Current status']
 
-                    ul.collapsible.z-depth-0(data-collapsible='expandable')
-                        li
-                            .collapsible-header.z-depth-0 More info
-                                i.material-icons.right arrow_drop_down
-                            .collapsible-body
-                                table.responsive-table.striped
-                                    tbody
-                                        each value, key in data
-                                            tr
-                                                td
-                                                    strong= key
-                                                td= value
+        .card.hide-on-med-and-up
+            .card-image
+                img(src=data['Profile photo'])
+                .card-title= data['Name']
+                    br
+                    small
+                        small
+                            if data.isOnline
+                                | online&nbsp;
+                            else
+                                | #{data['Last seen']}
+                            if data.isFromMobile
+                                i.material-icons.tiny stay_primary_portrait
+            .card-content
+                p
+                    if data.isListeningToMusic
+                        i.material-icons audiotrack
+                    = data['Current status']
+
+        ul.collapsible.collapsible-report-general(data-collapsible='expandable')
+            li
+                .collapsible-header More info
+                    i.material-icons.right arrow_drop_down
+                .collapsible-body
+                    table.striped
+                        tbody
+                            each value, key in data
+                                tr
+                                    td
+                                        strong= key
+                                    td= value
