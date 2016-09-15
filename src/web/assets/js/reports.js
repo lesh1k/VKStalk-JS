@@ -27,6 +27,8 @@
 
         $form.submit(function(e) {
             e.preventDefault();
+            $form.find('select, input, button').prop('disabled', true);
+
             var data = $form.serializeObject();
 
             $.ajax({
@@ -56,6 +58,9 @@
                     msg += response.statusText;
                     msg += '<br>' + response.responseText;
                     Materialize.toast(msg, 5000);
+                })
+                .always(function() {
+                    $form.find('select, input, button').prop('disabled', false);
                 });
         });
     }
