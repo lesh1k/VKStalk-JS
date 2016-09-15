@@ -11,7 +11,8 @@ const FORMATTERS = {
     'dataForConsole': formatForConsole,
     'updatesForConsole': formatUpdates,
     'reportMusic': formatReportMusic,
-    'reportGeneral': formatReportGeneral
+    'reportGeneral': formatReportGeneral,
+    'reportUpdates': formatReportUpdates
 };
 
 function format(type) {
@@ -87,6 +88,28 @@ function formatReportGeneral(doc) {
         if (k === '_id') continue;
         result += `${k.trim().replace(':', '')}: ${doc[k]}\n`;
     }
+
+    return result;
+}
+
+function formatReportUpdates(docs) {
+    if (!docs.length) {
+        return 'No updates tracks were found';
+    }
+
+    let result = '';
+
+    docs.forEach(doc => {
+        let update = '\n\n' + Array(40).join('-');
+        update += '\n' + new Date(doc.timestamp).toString();
+        for (let k in doc.updates) {
+            update += `\n\n${k}`;
+            update += `\nOld: ${doc.updates[k].old}`;
+            update += `\nNew: ${doc.updates[k].current}`;
+        }
+
+        result += update;
+    });
 
     return result;
 }
