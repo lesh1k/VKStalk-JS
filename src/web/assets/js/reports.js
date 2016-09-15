@@ -44,13 +44,13 @@
 
                     var msg = response.report_type + ' report is ready';
                     Materialize.toast(msg, 3000);
-                    if (response.report_type === 'music') {
-                        var $html = $(response.report);
-                        $html.find('tbody tr td:last-child').each(function(i, td) {
-                            $(td).text(new Date($(td).text()))
-                        });
-                        response.report = $html;
-                    }
+
+                    var $html = $(response.report);
+                    $html.find('.localize-date').each(function(i, el) {
+                        $(el).text(new Date($(el).text()))
+                    });
+                    response.report = $html;
+
                     $('#report').html(response.report);
                     animatedScrollTop('#report', 300);
                 })

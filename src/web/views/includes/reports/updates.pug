@@ -1,0 +1,21 @@
+if (!data.length)
+    h5 No updates found
+each doc in data
+    .row
+        .col.s12
+            .updates-card.card
+                .card-content
+                    span.card-title
+                        small.localize-date.hide-on-small-only #{doc.timestamp}
+                        small.hide-on-med-and-up
+                            small.localize-date #{doc.timestamp}
+                    small.right.hide-on-small-only User ID:&nbsp;#{doc.user_id}
+                    each update, key in doc.updates
+                        h5= key
+                        p
+                            b Old:&nbsp;
+                            | #{update.old}
+                        p
+                            b New:&nbsp;
+                            | #{update.current}
+                        br

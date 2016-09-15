@@ -1,13 +1,17 @@
-table.responsive-table.highlight
-    thead
-        tr
-            th Track
-            th Play count
-            th Last played
+if (!data.length)
+    h5 No music tracks found
+else
 
-    tbody
-        each entry in data
+    table.highlight.striped
+        thead
             tr
-                td= entry.track
-                td= entry.play_count
-                td= entry.last_played
+                th Track
+                th Play count
+                th Last played
+
+        tbody
+            each entry in data
+                tr
+                    td= entry.track
+                    td= entry.play_count
+                    td.localize-date= entry.last_played
