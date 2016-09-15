@@ -42,6 +42,11 @@
                 if (data.is_reconnect) {
                     $(card).find('.stalk-start, .stalk-stop').toggleClass('hide');
                 }
+
+                if (data.error) {
+                    $(card).find('.stalk-start').removeClass('hide');
+                    $(card).find('.stalk-stop').addClass('hide');
+                }
             }
         });
 

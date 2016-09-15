@@ -5,6 +5,7 @@ const path = require('path');
 const StalkedId = require('./models/stalked_id');
 const User = require('./models/user');
 const format = require('./format');
+const CONFIG = require('../config/config.json');
 
 
 module.exports = function(server) {
@@ -23,6 +24,14 @@ module.exports = function(server) {
             StalkedId.findOne({
                 sid: stalked_id
             }).then(sid_data => {
+                if ((!sid_data || !sid_data.subscribers.length) && Object.keys(workers).length >= CONFIG.max_workers) {
+                    socket.emit('stalk-data', {
+                        stalked_id: stalked_id,
+                        message: 'All workers busy. Please try again later.',
+                        error: 'All workers busy.'
+                    });
+                    return;
+                }
                 if (sid_data.subscribers.indexOf(username) === -1) {
                     sid_data.subscribers.push(username);
                     StalkedId.update({
@@ -181,6 +190,7 @@ module.exports = function(server) {
             }
 
             cluster.workers[worker_id].kill();
+            delete workers[stalked_id];
         }
     });
 
