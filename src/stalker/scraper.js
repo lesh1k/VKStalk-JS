@@ -33,6 +33,16 @@ exports.work = function(user_id) {
     scrape();
 };
 
+
+
+
+
+
+
+
+
+
+
 function scrape() {
     logger.info('Start scraping', {
         user_id: USER_ID
@@ -42,13 +52,20 @@ function scrape() {
             logger.info('Fetch HTML', {
                 user_id: USER_ID
             });
+
             const html = yield* getPageContent(URL);
             const $ = cheerio.load(html);
+
+
+
+
             if (!isUserPageOpen($)) {
                 retry_count++;
                 return;
             }
             retry_count = 0;
+
+
 
             logger.info('Extract user data from fetched HTML', {
                 user_id: USER_ID
@@ -56,11 +73,18 @@ function scrape() {
 
             const user_data = collectUserData($);
 
+
+
+
             logger.info('Check if new data has updates', {
                 user_id: USER_ID
             });
 
             const user_updates = yield* checkUserDataForUpdates(user_data);
+
+
+
+
             if (user_updates) {
                 logger.info('Write user data to DB', {
                     user_id: USER_ID,
@@ -84,11 +108,19 @@ function scrape() {
                 }
             }
 
+
+
+
+
             const data = {
                 user: user_data,
                 updates: user_updates,
                 logs_written: logs_written
             };
+
+
+
+
 
             logger.info('Send data if listeners available', {
                 user_id: USER_ID,
@@ -99,6 +131,9 @@ function scrape() {
                 type: 'stalk-data',
                 data: data
             });
+
+
+
         })
         .then(() => {
             const timeout = CONFIG.interval * 1000;
@@ -106,6 +141,10 @@ function scrape() {
                 user_id: USER_ID,
                 timeout: timeout
             });
+
+
+
+
             if (retry_count) {
                 logger.error('Cannot scrape page. !isUserPageOpen($) == true', {
                     user_id: USER_ID,
@@ -125,6 +164,9 @@ function scrape() {
                     helpers.terminate('Max retry attempts reached.', `Failed ${retry_count} of ${CONFIG.max_retry_attempts} attempts.`);
                 }
             }
+
+
+
             setTimeout(scrape, timeout);
         })
         .catch(err => {
@@ -132,6 +174,10 @@ function scrape() {
                 user_id: USER_ID,
                 critical: true
             });
+
+
+
+
 
             helpers.sendData({
                 error: '[CRITICAL ERROR] The process will terminate now. For more info see the logs'
@@ -141,6 +187,13 @@ function scrape() {
             }, 2000);
         });
 }
+
+
+
+
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
 
 function* getPageContent(url) {
     if (!instance || new Date().getTime() > instance_respawn) {
@@ -162,6 +215,9 @@ function* getPageContent(url) {
             respawn: new Date(instance_respawn)
         });
     }
+
+
+    
 
     logger.info('Fetching data...');
     helpers.sendData({
