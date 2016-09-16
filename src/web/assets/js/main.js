@@ -15,6 +15,20 @@
                 $card_data.css('min-height', height);
             }
         });
+
+        $(document).on('click', '.chip', function() {
+            var $chip = $(this);
+            $chip.siblings().removeClass('selected');
+            $chip.toggleClass('selected');
+
+            if ($chip.hasClass('selected')) {
+                var card = document.getElementById($chip.data('stalk-id'));
+                $('.stalking-card').not(card).parent().hide();
+                $(card).parent().show();
+            } else {
+                $('.stalking-card').parent().show();
+            }
+        });
     });
 })();
 
@@ -63,6 +77,11 @@
                 $(document.getElementById(data.stalked_id)).parent().fadeOut(function() {
                     $(this).remove();
                 });
+                var $chip = $('.chip[data-stalk-id="' + data.stalked_id + '"]');
+                if ($chip.hasClass('selected')) {
+                    $chip.click();
+                }
+                $chip.remove();
             } else {
                 $(document.getElementById(data.stalked_id)).find('.stalk-data').text(data.error);
             }
@@ -93,7 +112,9 @@
 
                     $form[0].reset();
                     $form.find('input').focus();
-                    $('#stalkers > .row:first-child').prepend(response.html);
+                    $('#stalkers .cards-row').append(response.html);
+                    var chip = createChip(response.stalked_id);
+                    $('.chips-container').append(chip);
                     socket.emit('stalk-join', response.stalked_id);
                 })
                 .fail(function(response) {
@@ -103,6 +124,15 @@
                     Materialize.toast(msg, 5000);
                 });
         });
+    }
+
+    function createChip(stalked_id) {
+        var $chip = $('<div class="chip" data-stalk-id="' + stalked_id + '"></div>');
+        $chip.append('<span/>').append('<i/>');
+        $chip.find('span').text(stalked_id + ' ');
+        $chip.find('i').addClass('material-icons vertical-align-middle tiny').text('play_circle_filled');
+
+        return $chip;
     }
 
     function setupCardActions(socket) {

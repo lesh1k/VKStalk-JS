@@ -20,7 +20,14 @@ block content
 
         section#stalkers
             .row
-                each stalk_id in user.stalked_ids.reverse()
+                .col.s12.chips-container
+                    each stalk_id in user.stalked_ids
+                        .chip(data-stalk-id=stalk_id)
+                             span #{stalk_id}&nbsp;
+                             i.material-icons.vertical-align-middle.tiny play_circle_filled
+
+            .row.cards-row
+                each stalk_id in user.stalked_ids
                     include ./includes/stalk_card.pug
 
 block scripts
