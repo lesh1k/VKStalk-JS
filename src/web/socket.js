@@ -28,7 +28,8 @@ module.exports = function(server) {
                     socket.emit('stalk-data', {
                         stalked_id: stalked_id,
                         message: 'All workers busy. Please try again later.',
-                        error: 'All workers busy.'
+                        error: 'All workers busy.',
+                        running: false
                     });
                     return;
                 }
@@ -85,7 +86,8 @@ module.exports = function(server) {
 
             socket.emit('stalk-data', {
                 stalked_id: stalked_id,
-                message: 'Connecting...'
+                message: 'Connecting...',
+                running: true
             });
             StalkedId.findOneAndUpdate({
                 sid: stalked_id
@@ -116,7 +118,8 @@ module.exports = function(server) {
                         worker.on('message', msg => {
                             io.sockets.to(room).emit('stalk-data', {
                                 stalked_id: stalked_id,
-                                message: format('web', msg)
+                                message: format('web', msg),
+                                running: true
                             });
                         });
                         worker.on('error', err => {
@@ -126,13 +129,15 @@ module.exports = function(server) {
                         socket.emit('stalk-data', {
                             stalked_id: stalked_id,
                             message: 'Connected. Waiting for a message...',
-                            is_reconnect: true
+                            is_reconnect: true,
+                            running: true
                         });
                     }
                 } else {
                     socket.emit('stalk-data', {
                         stalked_id: stalked_id,
-                        message: 'Stalker offline. Click "STALK" to turn it on.'
+                        message: 'Stalker offline. Click "STALK" to turn it on.',
+                        running: false
                     });
                 }
             });
@@ -142,7 +147,8 @@ module.exports = function(server) {
             const stalked_id = room;
             socket.emit('stalk-data', {
                 stalked_id: stalked_id,
-                message: 'Disconnecting...'
+                message: 'Disconnecting...',
+                running: false
             });
 
             StalkedId.findOne({
@@ -172,7 +178,8 @@ module.exports = function(server) {
 
                     socket.emit('stalk-data', {
                         stalked_id: stalked_id,
-                        message: 'Stalker offline. Click "STALK" to turn it on.'
+                        message: 'Stalker offline. Click "STALK" to turn it on.',
+                        running: false
                     });
 
                     if (!sid_data.subscribers.length) {

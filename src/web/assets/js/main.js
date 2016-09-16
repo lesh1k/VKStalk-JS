@@ -39,13 +39,14 @@
                 card.querySelector('.stalk-data').innerText = data.message;
                 $(card).trigger('cardHeightUpdate');
 
-                if (data.is_reconnect) {
-                    $(card).find('.stalk-start, .stalk-stop').toggleClass('hide');
+                if (data.is_reconnect || data.running) {
+                    $(card).removeClass('stopped').addClass('running');
+                } else {
+                    $(card).removeClass('running').addClass('stopped');
                 }
 
                 if (data.error) {
-                    $(card).find('.stalk-start').removeClass('hide');
-                    $(card).find('.stalk-stop').addClass('hide');
+                    $(card).removeClass('running').addClass('stopped');
                 }
             }
         });
@@ -54,7 +55,7 @@
             $('.stalk-data').text('Disconnected...');
             $('.card').trigger('cardHeightUpdate', {
                 reset: true
-            });
+            }).removeClass('running').addClass('stopped');
         });
 
         socket.on('stalk-remove', function(data) {
@@ -115,7 +116,8 @@
                 var $card = $(this).closest('.card');
                 var stalked_id = $card.attr('id');
                 socket.emit('stalk-start', stalked_id);
-                $card.find('.stalk-start, .stalk-stop').toggleClass('hide');
+                // $card.find('.stalk-start, .stalk-stop').toggleClass('hide');
+                $(card).removeClass('stopped').addClass('running');
             });
         }
 
@@ -127,7 +129,8 @@
                 $card.trigger('cardHeightUpdate', {
                     reset: true
                 });
-                $card.find('.stalk-start, .stalk-stop').toggleClass('hide');
+                // $card.find('.stalk-start, .stalk-stop').toggleClass('hide');
+                $card.removeClass('running').addClass('stopped');
             });
         }
 

@@ -1,5 +1,5 @@
 .col.s12.l6
-    .stalking-card.card.blue-grey.darken-1(id=stalk_id)
+    .stalking-card.stopped.card.blue-grey.darken-1(id=stalk_id)
         .card-content.white-text
             span.card-title User ID:
                 span.user-id &nbsp;#{stalk_id}
@@ -7,7 +7,7 @@
 
         .card-action
             a.stalk-start(href='javascript:void(0)') Stalk
-            a.stalk-stop.hide(href='javascript:void(0)') Stop
+            a.stalk-stop(href='javascript:void(0)') Stop
             a.report(href='/reports/' + stalk_id) Reports
             a.activator(href='javascript:void(0)') Remove
 
