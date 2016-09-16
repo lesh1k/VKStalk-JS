@@ -34,7 +34,6 @@
     "extend": "^3.0.0",
     "materialize-clockpicker": "^1.0.1",
     "materialize-css": "^0.97.7",
-    "memwatch-next": "^0.3.0",
     "mongoose": "^4.6.0",
     "monk": "^3.1.1",
     "passport": "^0.3.2",

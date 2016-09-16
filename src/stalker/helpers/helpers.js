@@ -1,7 +1,6 @@
 'use strict';
 
 const logger = require('../logger.js');
-const memwatch = require('memwatch-next');
 const cluster = require('cluster');
 const extend = require('extend');
 
@@ -64,12 +63,6 @@ exports.terminate = function(reason, message) {
         message: message
     });
     process.exit();
-};
-
-exports.monitorMemoryLeaks = function() {
-    memwatch.on('leak', function(info) {
-        logger.warn('Possible MEMORY LEAK detected', info);
-    });
 };
 
 exports.sendData = function(message, fallback_to_console = false) {
