@@ -27,8 +27,8 @@ module.exports = function(server) {
                 if ((!sid_data || !sid_data.subscribers.length) && Object.keys(workers).length >= CONFIG.max_workers) {
                     socket.emit('stalk-data', {
                         stalked_id: stalked_id,
-                        message: 'All workers busy. Please try again later.',
-                        error: 'All workers busy.',
+                        message: 'All workers are busy. Please try again later.',
+                        error: 'All workers are busy.',
                         running: false
                     });
                     return;
