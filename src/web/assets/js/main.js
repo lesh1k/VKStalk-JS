@@ -147,7 +147,7 @@
                 var stalked_id = $card.attr('id');
                 socket.emit('stalk-start', stalked_id);
                 // $card.find('.stalk-start, .stalk-stop').toggleClass('hide');
-                $(card).removeClass('stopped').addClass('running');
+                $card.removeClass('stopped').addClass('running');
             });
         }
 
