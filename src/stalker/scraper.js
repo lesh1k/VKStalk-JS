@@ -34,10 +34,6 @@ exports.work = function(user_id) {
 };
 
 function scrape() {
-    logger.debug('Function call. scrape()', {
-        args: [].slice.call(arguments)
-    });
-
     logger.info('Start scraping', {
         user_id: USER_ID
     });
