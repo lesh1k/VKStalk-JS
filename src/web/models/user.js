@@ -8,7 +8,12 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const User = new Schema({
     username: String,
     password: String,
-    stalked_ids: Array
+    stalked_ids: Array,
+    stalkers_count: {
+        type: Number,
+        default: 0,
+        min: 0
+    }
 });
 
 User.plugin(passportLocalMongoose);

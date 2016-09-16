@@ -24,27 +24,50 @@ module.exports = function(server) {
             StalkedId.findOne({
                 sid: stalked_id
             }).then(sid_data => {
-                if ((!sid_data || !sid_data.subscribers.length) && Object.keys(workers).length >= CONFIG.max_workers) {
-                    socket.emit('stalk-data', {
-                        stalked_id: stalked_id,
-                        message: 'All workers are busy. Please try again later.',
-                        error: 'All workers are busy.',
-                        running: false
-                    });
-                    return;
-                }
-                if (sid_data.subscribers.indexOf(username) === -1) {
-                    sid_data.subscribers.push(username);
-                    StalkedId.update({
-                        _id: sid_data._id
-                    }, {
-                        $set: {
-                            subscribers: sid_data.subscribers
-                        }
-                    }, () => {
-                        join(stalked_id);
-                    });
-                }
+                User.findOne({
+                    username: username
+                }).then(user => {
+                    if (user.stalkers_count >= CONFIG.max_workers_per_user) {
+                        socket.emit('stalk-data', {
+                            stalked_id: stalked_id,
+                            message: `Limit of ${CONFIG.max_workers_per_user} running stalker(s) per user reached`,
+                            error: 'Running stalkers per user limit reached.',
+                            running: false
+                        });
+                        return;
+                    }
+
+                    if ((!sid_data || !sid_data.subscribers.length) && Object.keys(workers).length >= CONFIG.max_workers) {
+                        socket.emit('stalk-data', {
+                            stalked_id: stalked_id,
+                            message: 'All workers are busy. Please try again later.',
+                            error: 'All workers are busy.',
+                            running: false
+                        });
+                        return;
+                    }
+                    if (sid_data.subscribers.indexOf(username) === -1) {
+                        sid_data.subscribers.push(username);
+                        StalkedId.update({
+                            _id: sid_data._id
+                        }, {
+                            $set: {
+                                subscribers: sid_data.subscribers
+                            }
+                        }, () => {
+                            User.findOneAndUpdate({
+                                username: username
+                            }, {
+                                $inc: {
+                                    stalkers_count: 1
+                                }
+                            }, () => {});
+                            join(stalked_id);
+                        });
+
+
+                    }
+                });
             });
         });
 
@@ -169,6 +192,13 @@ module.exports = function(server) {
                         subscribers: sid_data.subscribers
                     }
                 }).then(() => {
+                    User.findOneAndUpdate({
+                        username: username
+                    }, {
+                        $inc: {
+                            stalkers_count: -1
+                        }
+                    }, () => {});
                     console.log(`${username} is leaving room ${room}`);
                     socket.leave(room, err => {
                         if (err) {
