@@ -12,8 +12,8 @@ const db_helpers = require('./helpers/db_helpers.js');
 const logger = require('./logger.js');
 
 const CONFIG = require('../config/config.json');
-const collection = db.get('data');
-const collection_updates = db.get('data_updates');
+const Data = db.get('data');
+const DataUpdates = db.get('data_updates');
 let USER_ID = null;
 let logs_written = 0;
 let retry_count = 0;
@@ -90,8 +90,8 @@ function scrape() {
                     user_id: USER_ID,
                     data: user_data
                 });
-                const entry = yield collection.findOne({user_id: USER_ID});
-                yield collection.insert(user_data);
+                const entry = yield Data.findOne({user_id: USER_ID});
+                yield Data.insert(user_data);
                 logs_written++;
 
 
@@ -104,7 +104,7 @@ function scrape() {
                     logger.info('Write user updates to DB', {
                         doc: doc
                     });
-                    yield collection_updates.insert(doc);
+                    yield DataUpdates.insert(doc);
                 }
             }
 
@@ -217,7 +217,7 @@ function* getPageContent(url) {
     }
 
 
-    
+
 
     logger.info('Fetching data...');
     helpers.sendData({
@@ -265,7 +265,7 @@ function collectUserData($) {
 }
 
 function* checkUserDataForUpdates(data) {
-    let entry = yield collection.findOne({
+    let entry = yield Data.findOne({
         user_id: USER_ID
     });
 
@@ -275,7 +275,7 @@ function* checkUserDataForUpdates(data) {
         return 'First DB entry for user. Congrats!';
     }
 
-    const last_document = yield* db_helpers.getLastUserDocument(collection, USER_ID);
+    const last_document = yield* db_helpers.getLastUserDocument(Data, USER_ID);
     const updates = getDiff(last_document, data);
 
     return updates;
