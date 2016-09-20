@@ -8,7 +8,7 @@ module.exports = format;
 
 const FORMATTERS = {
     'console': formatConsole,
-    'dataForConsole': formatForConsole,
+    'dataForConsole': formatStalkData,
     'updatesForConsole': formatUpdates,
     'reportMusic': formatReportMusic,
     'reportGeneral': formatReportGeneral,
@@ -27,7 +27,7 @@ function format(type) {
 
 function formatConsole(data) {
     let result = '';
-    result += formatForConsole(data.user, data.logs_written);
+    result += formatStalkData(data.user, data.logs_written);
     if (data.updates) {
         result += formatUpdates(data.updates);
     }
@@ -35,7 +35,7 @@ function formatConsole(data) {
     return result;
 }
 
-function formatForConsole(data, logs_written = 0) {
+function formatStalkData(data, logs_written = 0) {
     let launch_date = helpers.getProcessLaunchDate();
     let name = data.Name.replace('  ', ' ');
     let result = `App launched on ${launch_date}\n`;
