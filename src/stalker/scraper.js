@@ -42,7 +42,7 @@ function scrape() {
     async_lib.auto({
         url: async_lib.constant(URL),
         html: ['url', getPageContent],
-        $: ['html', async_lib.asyncify(getHtmlHandler)],
+        $: ['html', async_lib.asyncify(loadHtml)],
         user_data: ['$', async_lib.asyncify(collectUserData)],
         prev_user_data: getPreviousUserData,
         user_updates: ['user_data', 'prev_user_data', async_lib.asyncify(checkUserDataForUpdates)],
@@ -156,7 +156,7 @@ function next() {
     setTimeout(scrape, timeout);
 }
 
-function getHtmlHandler({html}) {
+function loadHtml({html}) {
     const $ = cheerio.load(html);
     return $;
 }
