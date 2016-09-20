@@ -1,6 +1,5 @@
 'use strict';
 
-const memwatch = require('memwatch-next');
 const cluster = require('cluster');
 const path = require('path');
 
@@ -32,12 +31,6 @@ exports.capitalize = function(str) {
 
     str = str[0].toUpperCase() + str.substr(1);
     return str;
-};
-
-exports.monitorMemoryLeaks = function() {
-    memwatch.on('leak', function(info) {
-        logger.warn('Possible MEMORY LEAK detected', info);
-    });
 };
 
 exports.spawnStalker = function(args, onMessage, onError=console.error) {
