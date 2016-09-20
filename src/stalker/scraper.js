@@ -44,7 +44,7 @@ function scrape() {
         $: ['html', async_lib.asyncify(loadHtml)],
         user_data: ['$', async_lib.asyncify(collectUserData)],
         prev_user_data: getPreviousUserData,
-        user_updates: ['user_data', 'prev_user_data', async_lib.asyncify(checkUserDataForUpdates)],
+        user_updates: ['user_data', 'prev_user_data', checkUserDataForUpdates],
         store_user_updates: ['user_data', 'user_updates', 'prev_user_data', storeUserUpdates],
         store_user_data: ['user_data', 'user_updates', 'prev_user_data', storeUserData],
         send_data: ['user_data', 'user_updates', 'store_user_data', sendData]
@@ -60,7 +60,9 @@ function scrape() {
 
 function getPreviousUserData(callback) {
     Data.findOne({user_id: USER_ID}, {sort: {timestamp: -1}})
-        .then(callback.bind(null, null))
+        .then(doc => {
+            callback(null, doc);
+        })
         .catch(callback);
 }
 
@@ -75,11 +77,12 @@ function storeUserUpdates(results, callback) {
         logger.info('Write user updates to DB', {
             doc: doc
         });
-        DataUpdates.insert(doc);
-        callback(null, true);
+        DataUpdates.insert(doc, () => {
+            callback(null, true);
+        });
+    } else {
+        callback(null, false);
     }
-
-    callback(null, false);
 }
 
 function storeUserData(results, callback) {
@@ -90,17 +93,16 @@ function storeUserData(results, callback) {
             data: user_data
         });
 
-        Data.insert(user_data);
-        logs_written++;
-        callback(null, true);
+        Data.insert(user_data, () => {
+            logs_written++;
+            callback(null, true);
+        });
+    } else {
+        callback(null, false);
     }
-
-    callback(null, false);
 }
 
-function sendData(results, callback) {
-    const {user_updates, user_data} = results;
-
+function sendData({user_updates, user_data}, callback) {
     helpers.sendData({
         type: 'stalk-data',
         data: {
@@ -248,20 +250,23 @@ function collectUserData({$}) {
     return data;
 }
 
-function checkUserDataForUpdates({user_data, prev_user_data}) {
+function checkUserDataForUpdates({user_data, prev_user_data}, callback) {
     logger.info('Check if new data has updates', {
         user_id: USER_ID
     });
 
     if (!prev_user_data) {
-        logger.debug('No entries for this user.');
+        logger.debug('Skip check for updates. No previous data for this user is available.');
         // No entries for this USER_ID yet
         return 'First DB entry for user. Congrats!';
     }
 
     const updates = getDiff(prev_user_data, user_data);
 
-    return updates;
+    logger.debug('Updates:', {
+        updates: updates
+    });
+    callback(null, updates);
 }
 
 function getDiff(last_document, data) {
