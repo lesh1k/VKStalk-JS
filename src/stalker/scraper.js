@@ -9,7 +9,6 @@ const db = require('./db.js');
 const parse = require('./parser.js');
 const format = require('./format.js');
 const helpers = require('./helpers/helpers.js');
-const db_helpers = require('./helpers/db_helpers.js');
 const logger = require('./logger.js');
 
 const CONFIG = require('../config/config.json');
