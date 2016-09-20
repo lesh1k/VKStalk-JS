@@ -162,39 +162,53 @@ function getHtmlHandler({html}) {
 }
 
 function getPageContent({url}, callback) {
-    co(function*() {
+    async_lib.auto({
+        instance: getPhantomInstance,
+        html: ['instance', getHtml]
+    }, (err, results) => {
+        callback(err, results.html);
+    });
+}
 
-        if (!instance || new Date().getTime() > instance_respawn) {
-            if (instance_respawn) {
-                logger.info('Exiting phantom instance before respawn', {
-                    user_id: USER_ID
-                });
-                instance.exit();
-            }
-
-            logger.debug('Yield new phantom instance', {
+function getPhantomInstance(callback) {
+    if (!instance || new Date().getTime() > instance_respawn) {
+        if (instance_respawn) {
+            logger.info('Exiting phantom instance before respawn', {
                 user_id: USER_ID
             });
-            instance = yield* ph.initPhantomInstance();
-
-            instance_respawn = new Date().getTime() + CONFIG.phantom_respawn_interval;
-            logger.debug(`Set respawn phantom time to ${new Date(instance_respawn)}`, {
-                user_id: USER_ID,
-                respawn: new Date(instance_respawn)
-            });
+            instance.exit();
         }
 
-
-
-
-        logger.info('Fetching data...');
-        helpers.sendData({
-            data: 'Fetching data...'
+        logger.debug('Yield new phantom instance', {
+            user_id: USER_ID
         });
-        const html = yield* ph.fetchPageContent(url, instance, false);
 
-        return html;
-    }).then(html => callback(null, html));
+        co(ph.initPhantomInstance)
+            .then(ph_instance => {
+                instance_respawn = new Date().getTime() + CONFIG.phantom_respawn_interval;
+                logger.debug(`Set respawn phantom time to ${new Date(instance_respawn)}`, {
+                    user_id: USER_ID,
+                    respawn: new Date(instance_respawn)
+                });
+                instance = ph_instance;
+                callback(null, ph_instance);
+            });
+    } else {
+        callback(null, instance);
+    }
+}
+
+function getHtml({instance}, callback) {
+    const msg = 'Fetching HTML.';
+    logger.info(msg);
+    helpers.sendData({
+        data: msg
+    });
+
+    co(ph.fetchPageContent.bind(null, URL, instance, false))
+        .then(html => {
+            callback(null, html);
+        });
 }
 
 function isUserPageOpen($) {
