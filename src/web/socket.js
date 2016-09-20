@@ -1,7 +1,7 @@
 'use strict';
 
 const cluster = require('cluster');
-const path = require('path');
+const helpers = require('./helpers');
 const StalkedId = require('./models/stalked_id');
 const User = require('./models/user');
 const format = require('./format');
@@ -130,24 +130,16 @@ module.exports = function(server) {
                     let worker = cluster.workers[worker_id];
                     if (!worker) {
                         console.log('Creating new WORKER.');
-                        cluster.setupMaster({
-                            exec: path.resolve(__dirname, '../stalker/run'),
-                            args: ['stalk', stalked_id],
-                            silent: true
-                        });
-
-                        worker = cluster.fork();
-                        workers[stalked_id] = worker.id;
-                        worker.on('message', msg => {
+                        const onMessage = msg => {
                             io.sockets.to(room).emit('stalk-data', {
                                 stalked_id: stalked_id,
                                 message: format('web', msg),
                                 running: true
                             });
-                        });
-                        worker.on('error', err => {
-                            throw err;
-                        });
+                        };
+                        const args = ['stalk', stalked_id];
+                        worker = helpers.spawnStalker(args, onMessage);
+                        workers[stalked_id] = worker.id;
                     } else {
                         socket.emit('stalk-data', {
                             stalked_id: stalked_id,

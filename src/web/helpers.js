@@ -20,12 +20,14 @@ exports.spawnStalker = function(args, onMessage, onError=console.error) {
     const worker = cluster.fork();
     worker.on('message', onMessageThunkify(onMessage));
     worker.on('error', onError);
+
+    return worker;
 };
 
 function onMessageThunkify(fn) {
     return msg => {
         if (typeof msg.data === 'string') {
-            console.log(msg.data);
+            // console.log(msg.data);
         }
 
         if (msg.error) {
