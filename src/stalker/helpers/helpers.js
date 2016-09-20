@@ -90,12 +90,12 @@ exports.sendData = function(message, fallback_to_console = false) {
         });
         process.send(to_send);
     } else if (fallback_to_console) {
-        logger.info('Call to sendData(data) from the Master process. process.send not available, falling back to console.log');
+        logger.debug('Call to sendData(data) from the Master process. process.send not available, falling back to console.log');
         console.log(to_send);
     } else {
         let msg = 'Call to sendData(data) from the Master process.';
         msg += 'process.send not available, fallback to console.log forbidden. Nothing to do here';
-        logger.info(msg, {
+        logger.debug(msg, {
             message: to_send
         });
     }
