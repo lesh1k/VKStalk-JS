@@ -31,7 +31,13 @@ exports.work = function(user_id) {
 
     USER_ID = user_id;
     URL = CONFIG.url + USER_ID;
-    scrape();
+    (async_lib.retryable(
+        {
+            interval: CONFIG.interval * 1000,
+            times: CONFIG.max_retry_attempts
+        },
+        scrape
+    ))();
 };
 
 
@@ -51,76 +57,19 @@ function scrape() {
         url: async_lib.constant(URL),
         html: ['url', getPageContent],
         $: ['html', async_lib.asyncify(getHtmlHandler)],
-        is_page_open: ['$', async_lib.asyncify(isUserPageOpen)], // This one is not yet used
         user_data: ['$', async_lib.asyncify(collectUserData)],
-        prev_user_data: callback => {
-            Data.findOne({user_id: USER_ID}, {sort: {timestamp: -1}})
-                .then(callback.bind(null, null))
-                .catch(callback);
-        },
+        prev_user_data: getPreviousUserData,
         user_updates: ['user_data', 'prev_user_data', async_lib.asyncify(checkUserDataForUpdates)],
-        store_user_updates: ['user_data', 'user_updates', 'prev_user_data', (results, callback) => {
-            const {user_updates, prev_user_data, user_data} = results;
-            if (user_updates && typeof user_updates === 'object' && prev_user_data) {
-                const doc = {
-                    user_id: USER_ID,
-                    updates: user_updates,
-                    timestamp: user_data.timestamp
-                };
-                logger.info('Write user updates to DB', {
-                    doc: doc
-                });
-                DataUpdates.insert(doc);
-                callback(null, true);
-            }
-
-            callback(null, false);
-        }],
-        store_user_data: ['user_data', 'user_updates', 'prev_user_data', (results, callback) => {
-            const {user_updates, user_data} = results;
-            if (user_updates) {
-                logger.info('Write user data to DB', {
-                    user_id: USER_ID,
-                    data: user_data
-                });
-
-                Data.insert(user_data);
-                logs_written++;
-                callback(null, true);
-            }
-
-            callback(null, false);
-        }],
-        send_data: ['user_data', 'user_updates', 'store_user_data', (results, callback) => {
-            const {user_updates, user_data} = results;
-
-            helpers.sendData({
-                type: 'stalk-data',
-                data: {
-                    user: user_data,
-                    updates: user_updates,
-                    logs_written: logs_written
-                }
-            });
-
-            callback(null, true);
-        }]
-
-
+        store_user_updates: ['user_data', 'user_updates', 'prev_user_data', storeUserUpdates],
+        store_user_data: ['user_data', 'user_updates', 'prev_user_data', storeUserData],
+        send_data: ['user_data', 'user_updates', 'store_user_data', sendData]
     }, 1, (err, results) => {
         if (err) {
-            logger.error('Error', err);
-            setTimeout(() => {
-                throw err;
-            }, 2000);
+            handleScrapeError(err);
         } else {
-            logger.debug('Done!');
+            next();
+            logger.debug('Scrape done!');
         }
-
-        setTimeout(() => {
-            process.exit();
-        }, 2000);
-
     });
 
     // co(function*() {
@@ -262,9 +211,107 @@ function scrape() {
 
 
 /////////////////////////////////////////////////////////////
+
+function getPreviousUserData(callback) {
+    Data.findOne({user_id: USER_ID}, {sort: {timestamp: -1}})
+        .then(callback.bind(null, null))
+        .catch(callback);
+}
+
+function storeUserUpdates(results, callback) {
+    const {user_updates, prev_user_data, user_data} = results;
+    if (user_updates && typeof user_updates === 'object' && prev_user_data) {
+        const doc = {
+            user_id: USER_ID,
+            updates: user_updates,
+            timestamp: user_data.timestamp
+        };
+        logger.info('Write user updates to DB', {
+            doc: doc
+        });
+        DataUpdates.insert(doc);
+        callback(null, true);
+    }
+
+    callback(null, false);
+}
+
+function storeUserData(results, callback) {
+    const {user_updates, user_data} = results;
+    if (user_updates) {
+        logger.info('Write user data to DB', {
+            user_id: USER_ID,
+            data: user_data
+        });
+
+        Data.insert(user_data);
+        logs_written++;
+        callback(null, true);
+    }
+
+    callback(null, false);
+}
+
+function sendData(results, callback) {
+    const {user_updates, user_data} = results;
+
+    helpers.sendData({
+        type: 'stalk-data',
+        data: {
+            user: user_data,
+            updates: user_updates,
+            logs_written: logs_written
+        }
+    });
+
+    callback(null, true);
+}
+
+function handleScrapeError(err) {
+    if (err.retry) {
+        retry_count++;
+        retryScrape();
+        return;
+    }
+
+    logger.error(err);
+    helpers.sendData({
+        error: '[CRITICAL ERROR] The process will terminate now. For more info see the logs. Try restarting the stalker.'
+    });
+    setTimeout(() => {
+        throw err;
+    }, 2000);
+}
+
+function retryScrape() {
+    logger.error('Cannot scrape page. isUserPageOpen($) == false', {
+        user_id: USER_ID,
+        url: URL
+    });
+
+    const timeout = CONFIG.interval * 1000;
+    const message = format('retryConnectionMessage', retry_count, CONFIG.max_retry_attempts, USER_ID, URL, timeout);
+    logger.warn(message);
+    helpers.sendData({
+        error: message
+    });
+
+    if (retry_count >= CONFIG.max_retry_attempts) {
+        helpers.terminate('Max retry attempts reached.', `Failed ${retry_count} of ${CONFIG.max_retry_attempts} attempts.`);
+    }
+
+    setTimeout(scrape, timeout);
+}
+
+function next() {
+    retry_count = 0;
+    const timeout = CONFIG.interval * 1000;
+    setTimeout(scrape, timeout);
+}
 /////////////////////////////////////////////////////////////
 
 function getHtmlHandler({html}) {
+    asdsa
     const $ = cheerio.load(html);
     return $;
 }
@@ -306,23 +353,21 @@ function getPageContent({url}, callback) {
     }).then(html => callback(null, html));
 }
 
-function isUserPageOpen({$}) {
-    const is_hidden_or_deleted = ($ => {
-        if ($('#page_current_info, .profile_online').length === 0 || $('.profile_deleted_text').length > 0) {
-            return true;
-        }
+function isUserPageOpen($) {
+    const is_hidden_or_deleted = $('#page_current_info, .profile_online').length === 0 || $('.profile_deleted_text').length > 0;
+    const has_profile_info = $('#profile').length > 0;
+    const is_page_open = has_profile_info && !is_hidden_or_deleted;
 
-        return false;
-    })($);
-
-    if ($('#profile').length > 0 && !is_hidden_or_deleted) {
-        return true;
-    }
-
-    return false;
+    return is_page_open;
 }
 
 function collectUserData({$}) {
+    if (!isUserPageOpen($)) {
+        throw {
+            message: 'User page closed, hidden or does not exist',
+            retry: true
+        };
+    }
     logger.info('Extract user data from fetched HTML', {
         user_id: USER_ID
     });
