@@ -54,19 +54,19 @@ function setupPhantomCleanupOnNodeProcessTermination(instance) {
     const phantomInstanceKill = phantomKill.bind(null, instance);
 
     // On app closing
-    process.on('exit', phantomInstanceKill);
+    process.once('exit', phantomInstanceKill);
 
     // Catch CTRL+C
-    process.on('SIGINT', process.exit);
+    process.once('SIGINT', process.exit);
 
-    process.on('SIGTERM', process.exit);
-    process.on('SIGHUP', process.exit);
+    process.once('SIGTERM', process.exit);
+    process.once('SIGHUP', process.exit);
 
     // On uncaught exceptions
-    process.on('uncaughtException', phantomInstanceKill);
+    process.once('uncaughtException', phantomInstanceKill);
 
     // On uncaught rejected promises
-    process.on('unhandledRejection', phantomInstanceKill);
+    process.once('unhandledRejection', phantomInstanceKill);
 }
 
 function phantomKill(instance) {

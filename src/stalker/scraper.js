@@ -311,7 +311,6 @@ function next() {
 /////////////////////////////////////////////////////////////
 
 function getHtmlHandler({html}) {
-    asdsa
     const $ = cheerio.load(html);
     return $;
 }
