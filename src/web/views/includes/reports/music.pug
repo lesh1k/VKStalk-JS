@@ -14,4 +14,5 @@ else
                 tr
                     td= entry.track
                     td= entry.play_count
-                    td.localize-date= entry.last_played
+                    td
+                        span.timeago(data-datetime-iso=entry.last_played, title=entry.last_played)= entry.last_played
