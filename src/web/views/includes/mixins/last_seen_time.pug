@@ -1,0 +1,17 @@
+mixin lastSeenTime(last_seen, timestamp)
+    if (/ago$/i).test(last_seen)
+        - delta = 0
+        - matches = last_seen.match(/\d{1,2} minutes ago/i)
+        if matches && matches.length
+            - delta = parseInt(matches[0])
+        - ms_ago = new Date().getTime() - new Date(timestamp).getTime()
+        - seconds_ago = Math.round(ms_ago / 1000)
+
+        if (seconds_ago < 60 && !delta)
+            - last_seen = `last seen ${seconds_ago} second(s) ago`
+        else
+            - minutes_ago = Math.round(seconds_ago / 60) + delta
+            - last_seen = `last seen ${minutes_ago} minute(s) ago`
+
+
+    = last_seen
