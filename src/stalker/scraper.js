@@ -272,7 +272,12 @@ function checkUserDataForUpdates({user_data, prev_user_data}, callback) {
 function getDiff(last_document, data) {
     let updates = {};
 
-    let excluded = ['Last seen', 'timestamp'];
+    const excluded = ['timestamp'];
+    const exclude_last_seen = excludeLastSeen(last_document, data);
+    if (exclude_last_seen) {
+        excluded.push('Last seen');
+    }
+
     let keys = Object.keys(data).filter(k => excluded.indexOf(k) === -1);
     for (let k of keys) {
         if (data[k] !== last_document[k]) {
@@ -288,4 +293,22 @@ function getDiff(last_document, data) {
     }
 
     return null;
+}
+
+function excludeLastSeen(old_data, new_data) {
+    let key = 'Last seen';
+
+    // Should match 'at h:mm' OR 'at HH:mm'
+    const regex = /at \d{1,2}:\d{2}/i;
+    const contains_time = regex.test(new_data[key]);
+    const is_new = old_data[key] !== new_data[key];
+    if (contains_time && is_new) {
+        return false;
+    }
+
+    // if (!new_data.isOnline && !contains_time) {
+    //     new_data['Last seen'] = 'last seen less than one hour ago';
+    // }
+
+    return true;
 }
