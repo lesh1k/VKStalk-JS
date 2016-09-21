@@ -93,6 +93,30 @@ function onAuthorizeFail(data, message, error, accept) {
 app.use('/', web_routes);
 // app.use('/api', api_routes);
 
+// Restart existing stalkers
+(function() {
+    const helpers = require('./helpers');
+    const format = require('./format');
+    const StalkedId = require('./models/stalked_id');
+    StalkedId.find({$where: 'this.subscribers.length > 0'})
+        .then(docs => {
+            docs.forEach(doc => {
+                const stalked_id = doc.sid;
+                console.log('Restaring existing WORKER for', stalked_id);
+                const onMessage = msg => {
+                    io.sockets.to(stalked_id).emit('stalk-data', {
+                        stalked_id: stalked_id,
+                        message: format('web', msg),
+                        running: true
+                    });
+                };
+                const args = ['stalk', stalked_id];
+                const worker = helpers.spawnStalker(args, onMessage);
+                worker.stalked_id = stalked_id;
+            });
+        });
+})();
+
 // Start the server
 // app.listen(PORT);
 server.listen(PORT);

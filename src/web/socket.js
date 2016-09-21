@@ -13,6 +13,8 @@ module.exports = function(server) {
     const workers = {}; // {stalked_id: worker_id}
 
     io.on('connection', (socket) => {
+        prepopulateWorkers();
+
         const username = socket.request.user._doc.username;
         socket.emit('connection', {
             message: 'Connection established.'
@@ -129,7 +131,7 @@ module.exports = function(server) {
                     const worker_id = workers[stalked_id];
                     let worker = cluster.workers[worker_id];
                     if (!worker) {
-                        console.log('Creating new WORKER.');
+                        console.log('Creating new WORKER for', stalked_id);
                         const onMessage = msg => {
                             io.sockets.to(room).emit('stalk-data', {
                                 stalked_id: stalked_id,
@@ -224,4 +226,13 @@ module.exports = function(server) {
     });
 
     return io;
+
+    function prepopulateWorkers() {
+        for (let k in cluster.workers) {
+            const stalked_id = cluster.workers[k].stalked_id;
+            if (stalked_id) {
+                workers[stalked_id] = k;
+            }
+        }
+    }
 };
