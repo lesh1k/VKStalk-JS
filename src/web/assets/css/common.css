@@ -58,3 +58,11 @@ footer.page-footer {
 .display-none {
     display: none;
 }
+
+.updates-card .updates {
+    margin-bottom: 10px;
+}
+
+.updates-card .update {
+    margin-bottom: 10px;
+}
