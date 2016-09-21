@@ -77,6 +77,10 @@ router.route('/register')
     .post((req, res, next) => {
         const username = req.body.username;
         const password = req.body.password;
+        if (password.length < 8) {
+            return res.status(400).send('Password must be at least 8 characters long.');
+        }
+
         User.register(new User({
             username: username
         }), password, (err, user) => {
