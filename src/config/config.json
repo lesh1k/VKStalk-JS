@@ -1,7 +1,7 @@
 {
     "url": "https://vk.com/",
     "max_workers": 5,
-    "max_workers_per_user": 5,
+    "max_workers_per_user": 2,
     "interval": 15,
     "max_retry_attempts": 100,
     "log_level": "debug",
