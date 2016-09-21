@@ -3,7 +3,6 @@ extends ./layout.pug
 block content
     .row
         .col.s12
-            h3 Log in
             form#auth-form(role='form', method='post', action='/login')
                 .row
                     .input-field.col.s12.m6
@@ -14,8 +13,10 @@ block content
                         input#password(name='password', type='password', required, pattern="^.{1,}$", title="Password must be at least 8 symbols long")
                         label(for='password') Password
 
-
+                .row
                     button.btn.col.s12(type='submit') Log in
+
+                .row
                     button#create-account.btn.col.s12.white.blue-text Create account
 
     if (error && error.length > 0)
