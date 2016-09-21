@@ -53,8 +53,14 @@
 
                     var $html = $(response.report);
                     $html.find('.localize-date').each(function(i, el) {
-                        $(el).text(new Date($(el).text()))
+                        $(el).text(new Date($(el).text()));
                     });
+
+                    $html.find('.timeago').each(function(i, el) {
+                        var datetime = $(el).data('datetime-iso');
+                        $(el).text($.timeago(datetime));
+                    });
+
                     response.report = $html;
 
                     $('#report').html(response.report);
