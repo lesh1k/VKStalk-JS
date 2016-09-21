@@ -272,7 +272,7 @@ function checkUserDataForUpdates({user_data, prev_user_data}, callback) {
 function getDiff(last_document, data) {
     let updates = {};
 
-    let excluded = CONFIG.keys_to_exclude_when_looking_for_updates.concat(['timestamp']);
+    let excluded = ['Last seen', 'timestamp'];
     let keys = Object.keys(data).filter(k => excluded.indexOf(k) === -1);
     for (let k of keys) {
         if (data[k] !== last_document[k]) {

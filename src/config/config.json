@@ -56,7 +56,5 @@
             "attribute": "value",
             "selector": "#page_wall_posts #page_wall_count_own"
         }
-    ],
-    "keys_to_hide_from_updates": ["Current status"],
-    "keys_to_exclude_when_looking_for_updates": ["Last seen"]
+    ]
 }
