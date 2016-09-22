@@ -33,6 +33,7 @@
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "extend": "^3.0.0",
+    "jquery": "^2.2.4",
     "materialize-clockpicker": "^1.0.1",
     "materialize-css": "^0.97.7",
     "mongoose": "^4.6.0",
