@@ -22,7 +22,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
 const SECRETS = require('../config/secrets.json');
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8100;
 const web_routes = require('./routes/web.js');
 // const api_routes = require('./routes/api.js');
 const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
