@@ -258,7 +258,8 @@ function checkUserDataForUpdates({user_data, prev_user_data}, callback) {
     if (!prev_user_data) {
         logger.debug('Skip check for updates. No previous data for this user is available.');
         // No entries for this USER_ID yet
-        return 'First DB entry for user. Congrats!';
+        callback(null, 'First DB entry for user. Congrats!');
+        return;
     }
 
     const updates = getDiff(prev_user_data, user_data);
