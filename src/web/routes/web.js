@@ -77,17 +77,23 @@ router.route('/register')
     .post((req, res, next) => {
         const username = req.body.username;
         const password = req.body.password;
+
+        if (!username.length) {
+            req.session['error'] = 'Username cannot be empty';
+            return res.redirect('login');
+        }
+
         if (password.length < 8) {
-            return res.status(400).send('Password must be at least 8 characters long.');
+            req.session['error'] = 'Password must be at least 8 characters long.';
+            return res.redirect('login');
         }
 
         User.register(new User({
             username: username
         }), password, (err, user) => {
             if (err) {
-                return res.render('login', {
-                    error: err.message
-                });
+                req.session['error'] = err.message;
+                return res.redirect('login');
             }
 
             passport.authenticate('local')(req, res, () => {
@@ -103,10 +109,39 @@ router.route('/register')
 
 router.route('/login')
     .get((req, res) => {
-        res.render('login');
+        const context = {};
+        if (req.session.error) {
+            context.error = req.session.error;
+            req.session.error = null;
+        }
+        res.render('login', context);
     })
-    .post(passport.authenticate('local'), (req, res) => {
-        res.redirect('/');
+    .post((req, res, next) => {
+        passport.authenticate('local', (err, user, info) => {
+            if (err) {
+                return res.render('login', {
+                    error: err.message
+                });
+            }
+
+            if (!user) {
+                // *** Display message without using flash option
+                // re-render the login form with a message
+                return res.render('login', {
+                    error: info.message
+                });
+            }
+            req.logIn(user, function(err) {
+                if (err) {
+                    return res.render('login', {
+                        error: err.message
+                    });
+                }
+
+                return res.redirect('/');
+            });
+
+        })(req, res, next);
     });
 
 router.route('/logout')
