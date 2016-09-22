@@ -2,6 +2,11 @@ extends ./layout.pug
 
 block content
     .row
+        if (error && error.length > 0)
+            .col.s12
+                .card.red.lighten-1
+                    .card-content.white-text
+                        p= error
         .col.s12
             form#auth-form(role='form', method='post', action='/login')
                 .row
@@ -19,12 +24,6 @@ block content
                 .row
                     button#create-account.btn.col.s12.white.blue-text Create account
 
-    if (error && error.length > 0)
-        .row
-            .col.s12
-                .card.red.darken-2
-                    .card-content.white-text
-                        p= error
 
     script.
         (function() {
