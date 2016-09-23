@@ -6,16 +6,14 @@
 
     $(function() {
         $(document).on('cardHeightUpdate', '.card', function(e, data) {
-            setTimeout(function() {
-                var $card_data = $(this).find('.stalk-data');
-                var min_height = parseInt($card_data.css('min-height'), 10);
-                var height = $card_data.height();
-                if (data && data.reset) {
-                    $card_data.css('min-height', 0);
-                } else if (min_height < height) {
-                    $card_data.css('min-height', height);
-                }
-            }, 0);
+            var $card_data = $(this).find('.stalk-data');
+            var min_height = parseInt($card_data.css('min-height'), 10);
+            var height = $card_data.height();
+            if (data && data.reset) {
+                $card_data.css('min-height', 0);
+            } else if (min_height < height) {
+                $card_data.css('min-height', height);
+            }
         });
 
         $(document).on('click', '.chip', function() {
