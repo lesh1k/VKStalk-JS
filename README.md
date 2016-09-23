@@ -1,5 +1,7 @@
-# VKStalk-JS
-Scrapes VK user page for important information and interesting updates  
+# vkstalk-js
+Collect and analyze VK.com user's public information  
+
+- [Setup](#setup)
 
 
 ### Setup
