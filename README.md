@@ -19,13 +19,13 @@ Example #2: `https://vk.com/id999999999` => `USER_ID = id999999999`
 2. Home page.  
 ![Homepage](docs/screenshots/2_main.png)  
 
-2.1 To add users, input USER\_ID and press ENTER or click "ADD".  
-![Users added](docs/screenshots/3_added_users.png)  
+    2.1 To add users, input USER\_ID and press ENTER or click "ADD".  
+    ![Users added](docs/screenshots/3_added_users.png)  
 
-2.2 You can add as many USER_IDs as you want, however, there is a limit of max running stalkers per account, currently it is **2**.  
-![Stalked users limit](docs/screenshots/9_limit_users.png)  
+    2.2 You can add as many USER_IDs as you want, however, there is a limit of max running stalkers per account, currently it is **2**.  
+    ![Stalked users limit](docs/screenshots/9_limit_users.png)  
 
-2.3 Also, there is a global limit of **5** concurrent workers. So, if you're not interested OR not going to use the app, please stop the stalkers that you have started.  
+    2.3 Also, there is a global limit of **5** concurrent workers. So, if you're not interested OR not going to use the app, please stop the stalkers that you have started.  
 
 3. Start the stalker by clicking "STALK" in any of the added `USER_ID` cards  
 ![Stalker started](docs/screenshots/4_stalker_started.png)  
@@ -36,11 +36,11 @@ Example #2: `https://vk.com/id999999999` => `USER_ID = id999999999`
 5. Choose a report type. Some report types allow additional filtering (e.g. by date and/or time)  
 ![Report types](docs/screenshots/6_report_types.png)  
 
-5.1 Music report  
-![Report music](docs/screenshots/8_report_music.png)  
+    5.1 Music report  
+    ![Report music](docs/screenshots/8_report_music.png)  
 
-5.2 Updates report  
-![Report updates](docs/screenshots/7_report_updates.png)  
+    5.2 Updates report  
+    ![Report updates](docs/screenshots/7_report_updates.png)  
 
 
 ### Tips and tricks  
