@@ -50,7 +50,12 @@
         socket.on('stalk-data', function(data) {
             var card = document.getElementById(data.stalked_id);
             if (card) {
-                card.querySelector('.stalk-data').innerText = data.message;
+                $(card).find('.stalk-data').html(data.message.replace(/\n/igm, '<br>'));
+                var $html = $(card).find('.stalk-data');
+                $html.find('.localize-date').each(function(i, el) {
+                    $(el).text(new Date($(el).text()));
+                });
+
                 $(card).trigger('cardHeightUpdate');
 
                 if (data.is_reconnect || data.running) {
