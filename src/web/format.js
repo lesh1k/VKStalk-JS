@@ -50,7 +50,7 @@ function formatUserData(data, logs_written = 0) {
     result += `User name: ${name}\n`;
     result += `User ID: ${data.user_id}\n`;
     result += `Logs written: ${logs_written}\n\n`;
-    result += `Checked on <span class="localize-datetime">${data.timestamp}</span>\n\n`;
+    result += `Checked on <span class="localize-date">${data.timestamp}</span>\n\n`;
     result += `${name} -- ${data['Last seen']}`;
     if (data.isFromMobile) {
         result += ' [Mobile]';
