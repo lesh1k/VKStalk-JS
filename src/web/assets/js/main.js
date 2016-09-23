@@ -132,7 +132,7 @@
         var $chip = $('<div class="chip" data-stalk-id="' + stalked_id + '"></div>');
         $chip.append('<span/>').append('<i/>');
         $chip.find('span').text(stalked_id + ' ');
-        $chip.find('i').addClass('material-icons vertical-align-middle tiny').text('play_circle_filled');
+        $chip.find('i').addClass('material-icons vertical-align-middle tiny hide').text('play_circle_filled');
 
         return $chip;
     }
