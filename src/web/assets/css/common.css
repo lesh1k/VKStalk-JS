@@ -66,3 +66,7 @@ footer.page-footer {
 .updates-card .update {
     margin-bottom: 10px;
 }
+
+.updates .old {
+    opacity: .5;
+}

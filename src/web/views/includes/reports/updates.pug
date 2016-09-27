@@ -20,7 +20,7 @@ each doc in data
                         each update, key in doc.updates
                             .col.update
                                 strong= key
-                                p
+                                p.old
                                     b Old:&nbsp;
                                     | #{update.old}
                                 p
